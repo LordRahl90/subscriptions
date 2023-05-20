@@ -35,8 +35,8 @@ jobs:
         image: mysql:latest
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_USER: subs_user
-          MYSQL_PASSWORD: p@ssword
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: password
           MYSQL_DATABASE: subscriptions
           ENVIRONMENT: cicd
         ports:
