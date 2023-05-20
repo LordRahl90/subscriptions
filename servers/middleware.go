@@ -9,14 +9,16 @@ import (
 )
 
 var nonAuthPath = map[string]struct{}{
-	"products": {},
+	"/products": {},
 }
 
 func (s *Server) authenticated() func(c *gin.Context) {
 	return func(ctx *gin.Context) {
-		// if _, ok := nonAuthPath[ctx.FullPath()]; ok {
-		// 	ctx.Next()
-		// }
+		println("Path: ", ctx.FullPath())
+		if _, ok := nonAuthPath[ctx.FullPath()]; ok {
+			ctx.Next()
+			return
+		}
 		headers := ctx.Request.Header
 		authHeader, ok := headers["Authorization"]
 		if !ok {

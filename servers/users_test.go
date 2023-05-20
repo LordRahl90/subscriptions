@@ -35,28 +35,6 @@ func TestCreateNewUser(t *testing.T) {
 	assert.NotEmpty(t, r.CreatedAt)
 }
 
-// func TestCreateDuplicateUser(t *testing.T) {
-// 	u := createUser(t)
-
-// 	b, err := json.Marshal(u)
-// 	require.NoError(t, err)
-// 	require.NotNil(t, b)
-
-// 	res := requestHelper(t, http.MethodPost, "/user/create", "", b)
-// 	require.Equal(t, http.StatusCreated, res.Code)
-
-// 	var r responses.User
-// 	err = json.Unmarshal(res.Body.Bytes(), &r)
-// 	require.NoError(t, err)
-// 	require.NotNil(t, r)
-
-// 	// create the record again
-// 	res = requestHelper(t, http.MethodPost, "/user/create", "", b)
-// 	require.Equal(t, http.StatusBadRequest, res.Code)
-// 	exp := `{"data":null,"message":"email already exists","success":false}`
-// 	require.Equal(t, exp, res.Body.String())
-// }
-
 func TestCreateUserWithBadJSON(t *testing.T) {
 	b := []byte(`{
 		"name": "Bart Beatty",
