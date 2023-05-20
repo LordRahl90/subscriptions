@@ -13,9 +13,9 @@ func (s *Server) productsRoute() {
 	{
 		product.POST("", createProduct)
 		product.GET("", allProducts)
-		product.GET("/:id", singleProduct)
-		product.GET("/:id/plans", productPlans)
-		product.POST("/:id", purchase)
+		product.GET(":id", singleProduct)
+		product.GET(":id/plans", productPlans)
+		product.POST(":id", purchase)
 	}
 }
 
@@ -83,7 +83,15 @@ func singleProduct(ctx *gin.Context) {
 		return
 	}
 
-	success(ctx, res)
+	success(ctx, responses.Product{
+		ID:          res.ID,
+		Name:        res.Name,
+		Description: res.Description,
+		Tax:         res.Tax,
+		TrialExists: res.TrialExists,
+		CreatedAt:   res.CreatedAt,
+		UpdatedAt:   res.UpdatedAt,
+	})
 }
 
 func productPlans(ctx *gin.Context) {

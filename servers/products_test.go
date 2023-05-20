@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"testing"
+
 	"subscriptions/domains/products"
 	"subscriptions/requests"
 	"subscriptions/responses"
-	"testing"
 
 	"github.com/brianvoe/gofakeit"
 	"github.com/stretchr/testify/assert"
@@ -76,4 +77,21 @@ func TestGetAllProducts(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Len(t, results, 3)
+
+	id := results[1].ID
+	res = requestHelper(t, http.MethodGet, "/products/"+id, "", nil)
+	require.Equal(t, http.StatusOK, res.Code)
+
+	var response responses.Product
+	err = json.Unmarshal(res.Body.Bytes(), &response)
+	require.NoError(t, err)
+	require.NotEmpty(t, response)
+
+	assert.NotEmpty(t, response.ID)
+	assert.NotEmpty(t, response.CreatedAt)
+	assert.NotEmpty(t, response.UpdatedAt)
+	assert.Equal(t, results[1].Name, response.Name)
+	assert.Equal(t, results[1].Description, response.Description)
+	assert.Equal(t, results[1].Tax, response.Tax)
+	assert.Equal(t, results[1].TrialExists, response.TrialExists)
 }

@@ -2,6 +2,7 @@ package products
 
 import (
 	"context"
+	"log"
 	"os"
 	"testing"
 
@@ -82,6 +83,28 @@ func TestFindProducts(t *testing.T) {
 	assert.Equal(t, pps[1].Name, single.Name)
 	assert.Equal(t, pps[1].Description, single.Description)
 	assert.Equal(t, pps[1].Tax, single.Tax)
+}
+
+func FuzzCreateProduct(f *testing.F) {
+	ctx := context.Background()
+	ps, err := New(db)
+	if err != nil || ps == nil {
+		log.Fatal(err)
+	}
+
+	f.Fuzz(func(t *testing.T, name, description string, tax float64, trial bool) {
+		p := &Product{
+			Name:        name,
+			Description: description,
+			Tax:         tax,
+			TrialExists: trial,
+		}
+
+		err := ps.Create(ctx, p)
+		if err != nil {
+			log.Fatal(err)
+		}
+	})
 }
 
 func setupTestDB() *gorm.DB {
