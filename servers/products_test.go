@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"testing"
 
+	"subscriptions/domains/plans"
 	"subscriptions/domains/products"
 	"subscriptions/requests"
 	"subscriptions/responses"
@@ -94,4 +95,33 @@ func TestGetAllProducts(t *testing.T) {
 	assert.Equal(t, results[1].Description, response.Description)
 	assert.Equal(t, results[1].Tax, response.Tax)
 	assert.Equal(t, results[1].TrialExists, response.TrialExists)
+}
+
+func TestGetProductPlans(t *testing.T) {
+	ctx := context.Background()
+	p := &products.Product{
+		Name:        gofakeit.BuzzWord(),
+		Description: gofakeit.Word(),
+		TrialExists: true,
+		Tax:         10,
+	}
+	require.NoError(t, productService.Create(ctx, p))
+	for i := 0; i < 3; i++ {
+		v := &plans.SubscriptionPlan{
+			ProductID:     p.ID,
+			Amount:        200 * float64(i),
+			Duration:      3,
+			TrialDuration: 0,
+		}
+		require.NoError(t, planService.Create(ctx, v))
+	}
+
+	res := requestHelper(t, http.MethodGet, "/products/"+p.ID+"/plans", "", nil)
+	require.Equal(t, http.StatusOK, res.Code)
+
+	var response []responses.SubscriptionPlan
+
+	err := json.Unmarshal(res.Body.Bytes(), &response)
+	require.NoError(t, err)
+	require.Len(t, response, 3)
 }

@@ -101,6 +101,19 @@ func productPlans(ctx *gin.Context) {
 		internalError(ctx, err)
 		return
 	}
+	result := make([]responses.SubscriptionPlan, len(res))
 
-	success(ctx, res)
+	for i := range res {
+		result[i] = responses.SubscriptionPlan{
+			ID:            res[i].ID,
+			ProductID:     res[i].ProductID,
+			Amount:        res[i].Amount,
+			Duration:      res[i].Duration,
+			TrialDuration: res[i].TrialDuration,
+			CreatedAt:     res[i].CreatedAt,
+			UpdatedAt:     res[i].UpdatedAt,
+		}
+	}
+
+	success(ctx, result)
 }

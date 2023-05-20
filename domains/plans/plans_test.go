@@ -104,6 +104,8 @@ func newSubscriptionPlan(t *testing.T, productID string) *SubscriptionPlan {
 	t.Helper()
 	return &SubscriptionPlan{
 		ProductID: productID,
+		Amount:    200,
+		Duration:  4,
 	}
 }
 
