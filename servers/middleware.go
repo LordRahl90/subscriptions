@@ -8,8 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var nonAuthPath = map[string]struct{}{
+	"products": {},
+}
+
 func (s *Server) authenticated() func(c *gin.Context) {
 	return func(ctx *gin.Context) {
+		// if _, ok := nonAuthPath[ctx.FullPath()]; ok {
+		// 	ctx.Next()
+		// }
 		headers := ctx.Request.Header
 		authHeader, ok := headers["Authorization"]
 		if !ok {

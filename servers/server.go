@@ -56,16 +56,15 @@ func New(db *gorm.DB) (*Server, error) {
 }
 
 func (s *Server) setupRoutes() {
-	r := gin.Default()
+	r := gin.New()
 	r.POST("/login", s.authenticate)
 	r.POST("/user/create", s.createUser)
 	r.Use(s.authenticated())
 
+	s.Router = r
 	s.productsRoute()
 	s.vouchersRoute()
 	s.plansRoute()
-
-	s.Router = r
 }
 
 func success(c *gin.Context, response interface{}) {
