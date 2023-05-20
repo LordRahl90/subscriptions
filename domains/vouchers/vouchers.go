@@ -30,11 +30,10 @@ func New(db *gorm.DB) (*VoucherService, error) {
 
 // Create creates a new Voucher
 func (vs *VoucherService) Create(ctx context.Context, v *Voucher) error {
-	if err := v.validate(); err != nil {
-		return err
-	}
 	v.ID = primitive.NewObjectID().Hex()
 	v.CreatedAt = time.Now()
+	// all new vouchers are active automagically
+	v.Active = true
 
 	return vs.db.WithContext(ctx).Save(&v).Error
 }

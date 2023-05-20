@@ -140,7 +140,7 @@ func TestValidateVoucher(t *testing.T) {
 
 	for _, tt := range table {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.args.validate()
+			err := tt.args.Validate()
 			if tt.expError {
 				require.EqualError(t, err, tt.errMsg)
 			} else {
