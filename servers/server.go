@@ -3,14 +3,21 @@ package servers
 import (
 	"net/http"
 
+	"subscriptions/domains/plans"
+	"subscriptions/domains/products"
 	"subscriptions/domains/users"
+	"subscriptions/domains/vouchers"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 var (
-	userService users.IUserService
+	initError      error
+	userService    users.IUserService
+	productService products.Manager
+	voucherService vouchers.Manager
+	planService    plans.Manager
 )
 
 // Server container for the server object
@@ -23,11 +30,25 @@ type Server struct {
 // New returns a new instance of server with the provided db
 // this also initializes all the necessary services.
 func New(db *gorm.DB) (*Server, error) {
-	us, err := users.New(db)
-	if err != nil {
-		return nil, err
+	userService, initError = users.New(db)
+	if initError != nil {
+		return nil, initError
 	}
-	userService = us
+
+	productService, initError = products.New(db)
+	if initError != nil {
+		return nil, initError
+	}
+
+	voucherService, initError = vouchers.New(db)
+	if initError != nil {
+		return nil, initError
+	}
+
+	planService, initError = plans.New(db)
+	if initError != nil {
+		return nil, initError
+	}
 
 	s := &Server{DB: db}
 	s.setupRoutes()
@@ -39,6 +60,10 @@ func (s *Server) setupRoutes() {
 	r.POST("/login", s.authenticate)
 	r.POST("/user/create", s.createUser)
 	r.Use(s.authenticated())
+
+	s.productsRoute()
+	s.vouchersRoute()
+	s.plansRoute()
 
 	s.Router = r
 }
@@ -61,6 +86,14 @@ func unAuthorized(c *gin.Context, err error) {
 
 func badRequestFromError(c *gin.Context, err error) {
 	c.JSON(http.StatusBadRequest, gin.H{
+		"success": false,
+		"message": err.Error(),
+		"data":    nil,
+	})
+}
+
+func internalError(c *gin.Context, err error) {
+	c.JSON(http.StatusInternalServerError, gin.H{
 		"success": false,
 		"message": err.Error(),
 		"data":    nil,
