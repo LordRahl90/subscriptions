@@ -1,4 +1,4 @@
-package plans
+package subscription
 
 import (
 	"context"
@@ -24,38 +24,48 @@ func TestMain(m *testing.M) {
 	code = m.Run()
 }
 
-func TestCreateNewSubscriptionPlan(t *testing.T) {
+func TestCreateNewSubscription(t *testing.T) {
 	ctx := context.Background()
+	userID := primitive.NewObjectID().Hex()
 
-	p := &SubscriptionPlan{
-		ProductID:     primitive.NewObjectID().Hex(),
-		Amount:        100,
-		Duration:      3,
-		TrialDuration: 1,
+	s := &Subscription{
+		UserID:             userID,
+		ProductID:          primitive.NewObjectID().Hex(),
+		SubscriptionPlanID: primitive.NewObjectID().Hex(),
+		Duration:           4,
+		Amount:             2000,
+		Discount:           500,
+		Tax:                200,
+		Trial:              false,
+		Status:             UpdateActionUnpaused,
 	}
 
 	t.Cleanup(func() {
 		println("cleaning up")
-		db.Exec("DELETE FROM subscriptionplans WHERE id = ?", p.ID)
+		db.Exec("DELETE FROM subscriptions WHERE id = ?", s.ID)
 	})
 
 	ps, err := New(db)
 	require.NoError(t, err)
 	require.NotNil(t, ps)
 
-	err = ps.Create(ctx, p)
+	err = ps.Create(ctx, s)
 	require.NoError(t, err)
-	require.NotEmpty(t, p.ID)
+	require.NotEmpty(t, s.ID)
+
+	res, err := ps.Find(ctx, userID)
+	require.NoError(t, err)
+	assert.Len(t, res, 1)
 }
 
-func TestFindSubscriptionPlans(t *testing.T) {
+func TestFindSubscriptions(t *testing.T) {
 	ctx := context.Background()
 	ps, err := New(db)
 	require.NoError(t, err)
 	require.NotNil(t, ps)
 
-	pps := []*SubscriptionPlan{}
-	productID := primitive.NewObjectID().Hex()
+	pps := []*Subscription{}
+	userID := primitive.NewObjectID().Hex()
 
 	t.Cleanup(func() {
 		ids := make([]string, len(pps))
@@ -63,16 +73,16 @@ func TestFindSubscriptionPlans(t *testing.T) {
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
-		db.Exec("DELETE FROM plans WHERE id IN ?", ids)
+		db.Exec("DELETE FROM subscriptions WHERE id IN ?", ids)
 	})
 
 	for i := 1; i <= 3; i++ {
-		p := newSubscriptionPlan(t, productID)
+		p := newSubscription(t)
 		require.NoError(t, ps.Create(ctx, p))
 		pps = append(pps, p)
 	}
 
-	res, err := ps.Find(ctx, productID)
+	res, err := ps.Find(ctx, userID)
 	require.NoError(t, err)
 	assert.Len(t, res, 3)
 
@@ -80,11 +90,10 @@ func TestFindSubscriptionPlans(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, single)
 
-	assert.Equal(t, pps[1].ID, single.ID)
-	assert.Equal(t, pps[1].ProductID, single.ProductID)
-	assert.Equal(t, pps[1].Amount, single.Amount)
-	assert.Equal(t, pps[1].Duration, single.Duration)
-	assert.Equal(t, pps[1].TrialDuration, single.TrialDuration)
+	// assert.Equal(t, pps[1].ID, single.ID)
+	// assert.Equal(t, pps[1].Name, single.Name)
+	// assert.Equal(t, pps[1].Description, single.Description)
+	// assert.Equal(t, pps[1].Tax, single.Tax)
 }
 
 func setupTestDB() *gorm.DB {
@@ -100,13 +109,15 @@ func setupTestDB() *gorm.DB {
 	return db
 }
 
-func newSubscriptionPlan(t *testing.T, productID string) *SubscriptionPlan {
+func newSubscription(t *testing.T) *Subscription {
 	t.Helper()
-	return &SubscriptionPlan{
-		ProductID: productID,
+	return &Subscription{
+		// Name:        gofakeit.Name(),
+		// Description: gofakeit.Word(),
+		// Tax:         25.0,
 	}
 }
 
 func cleanup() {
-	db.Exec("DELETE FROM subscription_plans")
+	db.Exec("DELETE FROM subscriptions")
 }

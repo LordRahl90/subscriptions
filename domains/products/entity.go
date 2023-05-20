@@ -9,5 +9,6 @@ type Product struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Tax         float64 `json:"tax"`
+	TrialExists bool    `json:"trial_exists"`
 	gorm.Model
 }

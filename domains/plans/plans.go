@@ -2,7 +2,6 @@ package plans
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,7 +13,6 @@ var _ Manager = (*SubscriptionPlanService)(nil)
 // SubscriptionPlanService implements the Manager interface
 type SubscriptionPlanService struct {
 	db *gorm.DB
-	m  *sync.Mutex
 }
 
 // New returns a new instance of SubscriptionPlan service
@@ -24,7 +22,6 @@ func New(db *gorm.DB) (*SubscriptionPlanService, error) {
 	}
 	return &SubscriptionPlanService{
 		db: db,
-		m:  &sync.Mutex{},
 	}, nil
 }
 
@@ -46,7 +43,7 @@ func (ps *SubscriptionPlanService) Find(ctx context.Context, productID string) (
 func (ps *SubscriptionPlanService) FindOne(ctx context.Context, id string) (*SubscriptionPlan, error) {
 	var result *SubscriptionPlan
 	err := ps.db.WithContext(ctx).
-		Preload("Products").
+		// Preload("Products").
 		Where("id = ?", id).
 		First(&result).Error
 	return result, err
