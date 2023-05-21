@@ -61,6 +61,7 @@ func TestCreateSubscriptionWithDiscount(t *testing.T) {
 				ID:          primitive.NewObjectID().Hex(),
 				VoucherType: vouchers.VoucherTypePercentage,
 				Percentage:  20,
+				ExpiresOn:   time.Now().Add(24 * time.Hour),
 			}, nil
 		},
 	}

@@ -5,9 +5,11 @@ package servers
 import (
 	"encoding/json"
 	"net/http"
+	"testing"
+	"time"
+
 	"subscriptions/requests"
 	"subscriptions/responses"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -20,6 +22,7 @@ func TestCreateVoucherWithAmount(t *testing.T) {
 		ProductID:   primitive.NewObjectID().Hex(),
 		Code:        "1234567890",
 		Amount:      200,
+		ExpiresOn:   time.Now().Add(48 * time.Hour),
 	}
 
 	b, err := json.Marshal(req)
@@ -47,6 +50,7 @@ func TestCreateVoucherWithPercentage(t *testing.T) {
 		ProductID:   primitive.NewObjectID().Hex(),
 		Code:        "1234567890",
 		Percentage:  20,
+		ExpiresOn:   time.Now().Add(24 * time.Hour),
 	}
 
 	b, err := json.Marshal(req)

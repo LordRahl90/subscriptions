@@ -9,6 +9,7 @@ import (
 	"subscriptions/domains/vouchers"
 	"subscriptions/services/purchase/mocks"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -52,6 +53,7 @@ func TestProcessWithoutDiscount(t *testing.T) {
 				ID:          primitive.NewObjectID().Hex(),
 				VoucherType: vouchers.VoucherTypePercentage,
 				Percentage:  10,
+				ExpiresOn:   time.Now().Add(24 * time.Hour),
 			}, nil
 		},
 	}
@@ -104,6 +106,7 @@ func TestProcessWithDiscount(t *testing.T) {
 				ID:          primitive.NewObjectID().Hex(),
 				VoucherType: vouchers.VoucherTypePercentage,
 				Percentage:  10,
+				ExpiresOn:   time.Now().Add(24 * time.Hour),
 			}, nil
 		},
 	}
@@ -124,4 +127,52 @@ func TestProcessWithDiscount(t *testing.T) {
 	assert.Equal(t, 200.0, sub.Discount)
 	assert.Equal(t, 360.0, sub.Tax)
 	assert.Equal(t, 2160.0, sub.Total)
+}
+
+func TestProcessWithExpiredDiscount(t *testing.T) {
+	ctx := context.Background()
+	p := &Purchase{
+		ProductID: primitive.NewObjectID().Hex(),
+		PlanID:    primitive.NewObjectID().Hex(),
+		Voucher:   "HELLO_ONE_TWO",
+	}
+	ps := &mocks.ProductMock{
+		FindOneFunc: func(ctx context.Context, id string) (*products.Product, error) {
+			return &products.Product{
+				TaxRate: 20,
+			}, nil
+		},
+	}
+	pls := &mocks.SubscritionPlanMock{
+		FindOneFunc: func(ctx context.Context, id string) (*plans.SubscriptionPlan, error) {
+			return &plans.SubscriptionPlan{
+				Amount:        2000,
+				Duration:      3,
+				TrialDuration: 1,
+			}, nil
+		},
+	}
+
+	vs := &mocks.VoucherMocks{
+		FindByCodeFunc: func(ctx context.Context, code string) (*vouchers.Voucher, error) {
+			return &vouchers.Voucher{
+				ID:          primitive.NewObjectID().Hex(),
+				VoucherType: vouchers.VoucherTypePercentage,
+				Percentage:  10,
+				ExpiresOn:   time.Now().Add(time.Duration(-48 * time.Hour)),
+			}, nil
+		},
+	}
+
+	sbs := &mocks.SubscriptionMock{
+		CreateFunc: func(ctx context.Context, s *subscription.Subscription) error {
+			s.ID = primitive.NewObjectID().Hex()
+			return nil
+		},
+	}
+
+	pps := New(ps, pls, vs, sbs)
+	sub, err := pps.Process(ctx, p)
+	require.EqualError(t, err, "voucher has expired")
+	require.Nil(t, sub)
 }

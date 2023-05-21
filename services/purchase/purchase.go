@@ -2,10 +2,12 @@ package purchase
 
 import (
 	"context"
+	"fmt"
 	"subscriptions/domains/plans"
 	"subscriptions/domains/products"
 	"subscriptions/domains/subscription"
 	"subscriptions/domains/vouchers"
+	"time"
 )
 
 // Service contains the sales logic handling
@@ -44,6 +46,10 @@ func (ps Service) Process(ctx context.Context, p *Purchase) (*subscription.Subsc
 		if err != nil {
 			return nil, err
 		}
+		if v.ExpiresOn.Before(time.Now()) {
+			return nil, fmt.Errorf("voucher has expired")
+		}
+
 		voucher = *v
 	}
 

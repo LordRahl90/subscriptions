@@ -2,6 +2,7 @@ package vouchers
 
 import (
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -30,6 +31,7 @@ type Voucher struct {
 	Percentage  float64     `json:"percentage"`
 	Amount      float64     `json:"amount"`
 	Limit       uint        `json:"limit"`
+	ExpiresOn   time.Time   `json:"expires_on"`
 	gorm.Model
 }
 

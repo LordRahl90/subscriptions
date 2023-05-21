@@ -31,7 +31,6 @@ func TestCreateNewProduct(t *testing.T) {
 	p := newProduct(t)
 
 	t.Cleanup(func() {
-		println("cleaning up")
 		db.Exec("DELETE FROM products WHERE id = ?", p.ID)
 	})
 
@@ -58,7 +57,6 @@ func TestFindProducts(t *testing.T) {
 
 	t.Cleanup(func() {
 		ids := make([]string, len(pps))
-		println("pps len", len(pps))
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}

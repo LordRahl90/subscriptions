@@ -43,7 +43,6 @@ func TestCreateNewSubscription(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		println("cleaning up")
 		db.Exec("DELETE FROM subscriptions WHERE id = ?", s.ID)
 	})
 
@@ -158,7 +157,6 @@ func TestUpdateStatus(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		println("cleaning up")
 		db.Exec("DELETE FROM subscriptions WHERE id = ?", s.ID)
 	})
 
@@ -199,7 +197,6 @@ func setupTestDB() *gorm.DB {
 
 func newSubscription(t *testing.T, userID string, status Status) *Subscription {
 	t.Helper()
-	println("status: ", status)
 	return &Subscription{
 		UserID:             userID,
 		ProductID:          primitive.NewObjectID().Hex(),

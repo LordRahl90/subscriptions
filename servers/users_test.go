@@ -119,7 +119,6 @@ func TestAuthenticationWithBadPassword(t *testing.T) {
 	require.NotNil(t, b)
 
 	res = requestHelper(t, http.MethodPost, "/login", "", b)
-	println(res.Body.String())
 	require.Equal(t, http.StatusBadRequest, res.Code)
 	exp := `{"error":"password does not match","success":false}`
 	require.Equal(t, exp, res.Body.String())

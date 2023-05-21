@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/brianvoe/gofakeit"
 	"github.com/stretchr/testify/assert"
@@ -32,7 +33,6 @@ func TestCreateNewVoucher(t *testing.T) {
 	p := newVoucher(t)
 
 	t.Cleanup(func() {
-		println("cleaning up")
 		db.Exec("DELETE FROM vouchers WHERE id = ?", p.ID)
 	})
 
@@ -55,7 +55,6 @@ func TestFindVouchers(t *testing.T) {
 
 	t.Cleanup(func() {
 		ids := make([]string, len(pps))
-		println("pps len", len(pps))
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
@@ -86,7 +85,6 @@ func TestFindByCode(t *testing.T) {
 
 	t.Cleanup(func() {
 		ids := make([]string, len(pps))
-		println("pps len", len(pps))
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
@@ -203,6 +201,7 @@ func newVoucher(t *testing.T) *Voucher {
 		VoucherType: VoucherTypePercentage,
 		Code:        strings.ToUpper(gofakeit.BS()),
 		Percentage:  20,
+		ExpiresOn:   time.Now().Add(48 * time.Hour),
 	}
 }
 

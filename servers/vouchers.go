@@ -11,8 +11,6 @@ import (
 func (s *Server) vouchersRoute() {
 	vouchers := s.Router.Group("vouchers")
 	{
-		vouchers.GET("/:id/products", voucherProducts)
-		vouchers.POST("/valid", checkValidity)
 		vouchers.POST("", s.createVoucher)
 	}
 }
@@ -31,6 +29,7 @@ func (s *Server) createVoucher(ctx *gin.Context) {
 		Code:        req.Code,
 		Percentage:  req.Percentage,
 		Amount:      req.Amount,
+		ExpiresOn:   req.ExpiresOn,
 	}
 
 	if err := voucher.Validate(); err != nil {
@@ -53,8 +52,6 @@ func (s *Server) createVoucher(ctx *gin.Context) {
 		Percentage:  voucher.Percentage,
 		CreatedAt:   voucher.CreatedAt,
 		UpdatedAt:   voucher.UpdatedAt,
+		ExpiresOn:   voucher.ExpiresOn,
 	})
 }
-
-func voucherProducts(ctx *gin.Context) {}
-func checkValidity(ctx *gin.Context)   {}

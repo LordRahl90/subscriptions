@@ -35,7 +35,6 @@ func TestCreateNewSubscriptionPlan(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		println("cleaning up")
 		db.Exec("DELETE FROM subscriptionplans WHERE id = ?", p.ID)
 	})
 
@@ -59,7 +58,6 @@ func TestFindSubscriptionPlans(t *testing.T) {
 
 	t.Cleanup(func() {
 		ids := make([]string, len(pps))
-		println("pps len", len(pps))
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
