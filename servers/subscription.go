@@ -70,7 +70,7 @@ func (s *Server) userSubscriptions(ctx *gin.Context) {
 	}
 	res, err := s.subscriptionService.Find(ctx.Request.Context(), userData.(*core.TokenData).UserID)
 	if err != nil {
-		badRequestFromError(ctx, err)
+		internalError(ctx, err)
 		return
 	}
 
@@ -102,6 +102,10 @@ func (s *Server) subscriptionDetail(ctx *gin.Context) {
 	}
 	sub, err := s.subscriptionService.FindOne(ctx, id)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			notFound(ctx)
+			return
+		}
 		internalError(ctx, err)
 		return
 	}

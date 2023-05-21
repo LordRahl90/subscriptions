@@ -95,7 +95,7 @@ func TestAuthenticateWithNonExistingEmail(t *testing.T) {
 
 	res := requestHelper(t, http.MethodPost, "/login", "", b)
 	require.Equal(t, http.StatusBadRequest, res.Code)
-	exp := `{"data":null,"message":"email not registered","success":false}`
+	exp := `{"error":"email not registered","success":false}`
 	require.Equal(t, exp, res.Body.String())
 }
 
@@ -121,7 +121,7 @@ func TestAuthenticationWithBadPassword(t *testing.T) {
 	res = requestHelper(t, http.MethodPost, "/login", "", b)
 	println(res.Body.String())
 	require.Equal(t, http.StatusBadRequest, res.Code)
-	exp := `{"data":null,"message":"password does not match","success":false}`
+	exp := `{"error":"password does not match","success":false}`
 	require.Equal(t, exp, res.Body.String())
 }
 

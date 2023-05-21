@@ -72,3 +72,48 @@ func TestVoucherToString(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculate(t *testing.T) {
+	t.Parallel()
+	table := []struct {
+		name        string
+		voucher     Voucher
+		exp, amount float64
+	}{
+		{
+			name: "amount",
+			voucher: Voucher{
+				VoucherType: VoucherTypeAmount,
+				Amount:      200.0,
+			},
+			amount: 2000,
+			exp:    200.0,
+		},
+		{
+			name: "percentage",
+			voucher: Voucher{
+				VoucherType: VoucherTypePercentage,
+				Percentage:  20,
+			},
+			amount: 200,
+			exp:    40.0,
+		},
+		{
+			name: "unknown",
+			voucher: Voucher{
+				VoucherType: VoucherTypeUnknown,
+				Percentage:  20,
+				Amount:      200,
+			},
+			amount: 200,
+			exp:    0.0,
+		},
+	}
+
+	for _, tt := range table {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.voucher.Calculate(tt.amount)
+			require.Equal(t, tt.exp, got)
+		})
+	}
+}

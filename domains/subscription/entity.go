@@ -58,10 +58,10 @@ func FromString(s string) Status {
 // Subscription contains the subscription details
 type Subscription struct {
 	ID                 string  `json:"id" gorm:"primaryKey;size:32"`
-	UserID             string  `json:"user_id" gorm:"primaryKey;size:32"`
-	ProductID          string  `json:"product_id" gorm:"primaryKey;size:32"`
-	SubscriptionPlanID string  `json:"subscription_plan_id" gorm:"primaryKey;size:32"`
-	VoucherID          string  `json:"voucher_id" gorm:"primaryKey;size:32"`
+	UserID             string  `json:"user_id" gorm:"primaryKey;size:100"`
+	ProductID          string  `json:"product_id" gorm:"primaryKey;size:100"`
+	SubscriptionPlanID string  `json:"subscription_plan_id" gorm:"primaryKey;size:100"`
+	VoucherID          string  `json:"voucher_id" gorm:"primaryKey;size:100"`
 	Duration           uint    `json:"duration"`
 	Amount             float64 `json:"amount"`
 	Discount           float64 `json:"discount"`

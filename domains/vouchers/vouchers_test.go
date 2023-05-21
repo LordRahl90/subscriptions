@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gorm.io/driver/mysql"
@@ -70,14 +71,45 @@ func TestFindVouchers(t *testing.T) {
 	single, err := ps.FindOne(ctx, pps[1].ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, single)
+	assert.Equal(t, pps[1].ID, single.ID)
+	assert.Equal(t, pps[1].Amount, single.Amount)
+	assert.Equal(t, pps[1].Percentage, single.Percentage)
+	assert.Equal(t, pps[1].VoucherType, single.VoucherType)
+}
+func TestFindByCode(t *testing.T) {
+	ctx := context.Background()
+	ps, err := New(db)
+	require.NoError(t, err)
+	require.NotNil(t, ps)
 
-	// assert.Equal(t, pps[1].ID, single.ID)
-	// assert.Equal(t, pps[1].Name, single.Name)
-	// assert.Equal(t, pps[1].Description, single.Description)
-	// assert.Equal(t, pps[1].Tax, single.Tax)
+	pps := []*Voucher{}
+
+	t.Cleanup(func() {
+		ids := make([]string, len(pps))
+		println("pps len", len(pps))
+		for i := range pps {
+			ids[i] = pps[i].ID
+		}
+		db.Exec("DELETE FROM vouchers WHERE id IN ?", ids)
+	})
+
+	for i := 1; i <= 3; i++ {
+		p := newVoucher(t)
+		require.NoError(t, ps.Create(ctx, p))
+		pps = append(pps, p)
+	}
+
+	single, err := ps.FindByCode(ctx, pps[1].Code)
+	require.NoError(t, err)
+	require.NotEmpty(t, single)
+	assert.Equal(t, pps[1].ID, single.ID)
+	assert.Equal(t, pps[1].Amount, single.Amount)
+	assert.Equal(t, pps[1].Percentage, single.Percentage)
+	assert.Equal(t, pps[1].VoucherType, single.VoucherType)
 }
 
 func TestValidateVoucher(t *testing.T) {
+	t.Parallel()
 	table := []struct {
 		name     string
 		args     Voucher

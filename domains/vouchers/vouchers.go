@@ -51,7 +51,6 @@ func (ps *VoucherService) FindOne(ctx context.Context, id string) (*Voucher, err
 func (ps *VoucherService) FindByCode(ctx context.Context, code string) (*Voucher, error) {
 	var result *Voucher
 	err := ps.db.WithContext(ctx).
-		Preload("Products").
 		Where("code = ?", code).
 		First(&result).Error
 	return result, err

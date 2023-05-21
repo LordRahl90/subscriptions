@@ -6,10 +6,11 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"testing"
+
 	"subscriptions/domains/plans"
 	"subscriptions/requests"
 	"subscriptions/responses"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
