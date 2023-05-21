@@ -2,7 +2,6 @@ package vouchers
 
 import (
 	"fmt"
-	"subscriptions/domains/products"
 
 	"gorm.io/gorm"
 )
@@ -23,27 +22,18 @@ const (
 
 // Voucher contains the voucher details
 type Voucher struct {
-	ID          string             `json:"id" gorm:"primaryKey;size:32"`
-	VoucherType VoucherType        `json:"voucher_type" gorm:""`
-	ProductID   string             `json:"product_id"`
-	Products    []products.Product `json:"products" gorm:"foreignKey:ID;references:ProductID"` //one to many relationship with products
-	Code        string             `json:"code"`
-	Active      bool               `json:"active"`
-	Percentage  float64            `json:"percentage"`
-	Amount      float64            `json:"amount"`
+	ID          string      `json:"id" gorm:"primaryKey;size:32"`
+	VoucherType VoucherType `json:"voucher_type" gorm:""`
+	ProductID   string      `json:"product_id"`
+	Code        string      `json:"code"`
+	Active      bool        `json:"active"`
+	Percentage  float64     `json:"percentage"`
+	Amount      float64     `json:"amount"`
+	Limit       uint        `json:"limit"`
 	gorm.Model
 }
 
-// VoucherUsage tracks the voucher usage
-type VoucherUsage struct {
-	ID             string `json:"id" gorm:"primaryKey;size:32"`
-	VoucherID      string `json:"voucher_id"`
-	SubscriptionID string `json:"subscription_id"`
-	UserID         string `json:"user_id"`
-	gorm.Model
-}
-
-// String returns the string version of the voucher type
+// String returns the string representation of the voucher type
 func (v VoucherType) String() string {
 	switch v {
 	case VoucherTypePercentage:
@@ -55,18 +45,7 @@ func (v VoucherType) String() string {
 	}
 }
 
-// VoucherTypeFromString returns the voucher type from a given string
-func VoucherTypeFromString(s string) VoucherType {
-	switch s {
-	case VoucherTypeAmount.String():
-		return VoucherTypeAmount
-	case VoucherTypePercentage.String():
-		return VoucherTypePercentage
-	default:
-		return VoucherTypeUnknown
-	}
-}
-
+// Validate validates the voucher
 func (v Voucher) Validate() error {
 	if v.VoucherType == VoucherTypeUnknown {
 		return fmt.Errorf("unknown voucher")
@@ -84,4 +63,28 @@ func (v Voucher) Validate() error {
 	}
 
 	return nil
+}
+
+// Calculate calculates the currency amount for a given voucher
+func (v Voucher) Calculate(amount float64) float64 {
+	if v.VoucherType == VoucherTypeUnknown {
+		return 0
+	}
+	if v.VoucherType == VoucherTypeAmount {
+		return v.Amount
+	}
+
+	return v.Percentage / 100 * amount
+}
+
+// VoucherTypeFromString returns the voucher type from a given string
+func VoucherTypeFromString(s string) VoucherType {
+	switch s {
+	case VoucherTypeAmount.String():
+		return VoucherTypeAmount
+	case VoucherTypePercentage.String():
+		return VoucherTypePercentage
+	default:
+		return VoucherTypeUnknown
+	}
 }

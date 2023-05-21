@@ -113,10 +113,12 @@ func TestFindSubscriptionsByStatus(t *testing.T) {
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
+
 		db.Exec("DELETE FROM subscriptions WHERE id IN ?", ids)
 	})
 
 	for i := range status {
+		i := i
 		p := newSubscription(t, userID, status[i])
 		require.NoError(t, ps.Create(ctx, p))
 		pps = append(pps, p)
@@ -197,6 +199,7 @@ func setupTestDB() *gorm.DB {
 
 func newSubscription(t *testing.T, userID string, status Status) *Subscription {
 	t.Helper()
+	println("status: ", status)
 	return &Subscription{
 		UserID:             userID,
 		ProductID:          primitive.NewObjectID().Hex(),

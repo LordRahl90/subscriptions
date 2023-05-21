@@ -15,7 +15,6 @@ func (s *Server) productsRoute() {
 		product.GET("", allProducts)
 		product.GET(":id", singleProduct)
 		product.GET(":id/plans", productPlans)
-		product.POST(":id", purchase)
 	}
 }
 
@@ -30,7 +29,7 @@ func createProduct(ctx *gin.Context) {
 	product := &products.Product{
 		Name:        req.Name,
 		Description: req.Description,
-		Tax:         req.Tax,
+		TaxRate:     req.Tax,
 		TrialExists: req.TrialExists,
 	}
 
@@ -43,14 +42,12 @@ func createProduct(ctx *gin.Context) {
 		ID:          product.ID,
 		Name:        product.Name,
 		Description: product.Description,
-		Tax:         product.Tax,
+		Tax:         product.TaxRate,
 		TrialExists: product.TrialExists,
 		CreatedAt:   product.CreatedAt,
 		UpdatedAt:   product.UpdatedAt,
 	})
 }
-
-func purchase(ctx *gin.Context) {}
 
 func allProducts(ctx *gin.Context) {
 	res, err := productService.Find(ctx.Request.Context())
@@ -65,7 +62,7 @@ func allProducts(ctx *gin.Context) {
 			ID:          res[i].ID,
 			Name:        res[i].Name,
 			Description: res[i].Description,
-			Tax:         res[i].Tax,
+			Tax:         res[i].TaxRate,
 			TrialExists: res[i].TrialExists,
 			CreatedAt:   res[i].CreatedAt,
 			UpdatedAt:   res[i].UpdatedAt,
@@ -87,7 +84,7 @@ func singleProduct(ctx *gin.Context) {
 		ID:          res.ID,
 		Name:        res.Name,
 		Description: res.Description,
-		Tax:         res.Tax,
+		Tax:         res.TaxRate,
 		TrialExists: res.TrialExists,
 		CreatedAt:   res.CreatedAt,
 		UpdatedAt:   res.UpdatedAt,

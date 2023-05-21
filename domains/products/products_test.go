@@ -82,7 +82,7 @@ func TestFindProducts(t *testing.T) {
 	assert.Equal(t, pps[1].ID, single.ID)
 	assert.Equal(t, pps[1].Name, single.Name)
 	assert.Equal(t, pps[1].Description, single.Description)
-	assert.Equal(t, pps[1].Tax, single.Tax)
+	assert.Equal(t, pps[1].TaxRate, single.TaxRate)
 }
 
 func FuzzCreateProduct(f *testing.F) {
@@ -96,7 +96,7 @@ func FuzzCreateProduct(f *testing.F) {
 		p := &Product{
 			Name:        name,
 			Description: description,
-			Tax:         tax,
+			TaxRate:     tax,
 			TrialExists: trial,
 		}
 
@@ -125,7 +125,7 @@ func newProduct(t *testing.T) *Product {
 	return &Product{
 		Name:        gofakeit.Name(),
 		Description: gofakeit.Word(),
-		Tax:         25.0,
+		TaxRate:     25.0,
 	}
 }
 

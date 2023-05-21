@@ -1,3 +1,5 @@
 package purchase
 
-type PurchaseManager interface{}
+type PurchaseManager interface {
+	// calculate voucher amount
+}

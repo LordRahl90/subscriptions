@@ -65,6 +65,7 @@ func (s *Server) setupRoutes() {
 	s.productsRoute()
 	s.vouchersRoute()
 	s.plansRoute()
+	s.subscriptionRoute()
 }
 
 func success(c *gin.Context, response interface{}) {

@@ -28,7 +28,7 @@ func New(db *gorm.DB) (*SubscriptionService, error) {
 	}, nil
 }
 
-// Create creates a new subscription
+// Create creates a new subscription.
 func (ss *SubscriptionService) Create(ctx context.Context, p *Subscription) error {
 	p.ID = primitive.NewObjectID().Hex()
 	p.CreatedAt = time.Now()
@@ -37,7 +37,6 @@ func (ss *SubscriptionService) Create(ctx context.Context, p *Subscription) erro
 }
 
 // Find returns all the subscriptions available to a user
-// we might need a flag here to only return active subscriptions
 func (ss *SubscriptionService) Find(ctx context.Context, userID string) (result []Subscription, err error) {
 	err = ss.db.WithContext(ctx).Where("user_id = ?", userID).Find(&result).Error
 	return

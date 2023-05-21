@@ -67,7 +67,7 @@ func TestGetAllProducts(t *testing.T) {
 			Name:        gofakeit.BuzzWord(),
 			Description: gofakeit.Word(),
 			TrialExists: true,
-			Tax:         10,
+			TaxRate:     10,
 		}))
 	}
 
@@ -103,7 +103,7 @@ func TestGetProductPlans(t *testing.T) {
 		Name:        gofakeit.BuzzWord(),
 		Description: gofakeit.Word(),
 		TrialExists: true,
-		Tax:         10,
+		TaxRate:     10,
 	}
 	require.NoError(t, productService.Create(ctx, p))
 	for i := 0; i < 3; i++ {

@@ -42,8 +42,17 @@ func (vs *VoucherService) Create(ctx context.Context, v *Voucher) error {
 func (ps *VoucherService) FindOne(ctx context.Context, id string) (*Voucher, error) {
 	var result *Voucher
 	err := ps.db.WithContext(ctx).
-		Preload("Products").
 		Where("id = ?", id).
+		First(&result).Error
+	return result, err
+}
+
+// FindOne finds a voucher with its code
+func (ps *VoucherService) FindByCode(ctx context.Context, code string) (*Voucher, error) {
+	var result *Voucher
+	err := ps.db.WithContext(ctx).
+		Preload("Products").
+		Where("code = ?", code).
 		First(&result).Error
 	return result, err
 }

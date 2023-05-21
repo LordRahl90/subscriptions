@@ -8,7 +8,7 @@ type Product struct {
 	ID          string  `json:"id" gorm:"primaryKey;size:32"`
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
-	Tax         float64 `json:"tax"`
+	TaxRate     float64 `json:"tax"`
 	TrialExists bool    `json:"trial_exists"`
 	gorm.Model
 }
