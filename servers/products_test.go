@@ -43,7 +43,7 @@ func TestCreateNewProduct(t *testing.T) {
 	assert.Equal(t, req.Description, response.Description)
 	assert.Equal(t, req.Tax, response.Tax)
 
-	// db.Exec("DELETE FROM products WHERE id = ?", response.ID)
+	db.Exec("DELETE FROM products WHERE id = ?", response.ID)
 }
 
 func TestCreateWithInvalidJSON(t *testing.T) {
