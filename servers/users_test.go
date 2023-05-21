@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"subscriptions/domains/users"
 	"subscriptions/requests"
 	"subscriptions/responses"
 
@@ -138,5 +139,6 @@ func createUser(t *testing.T) *requests.CreateUser {
 		Name:     gofakeit.Name(),
 		Email:    gofakeit.Email(),
 		Password: "password",
+		UserType: string(users.UserTypeAdmin),
 	}
 }

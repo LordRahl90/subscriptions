@@ -24,12 +24,12 @@ const (
 // Voucher contains the voucher details
 type Voucher struct {
 	ID          string      `json:"id" gorm:"primaryKey;size:32"`
-	VoucherType VoucherType `json:"voucher_type" gorm:""`
-	ProductID   string      `json:"product_id"`
-	Code        string      `json:"code"`
+	VoucherType VoucherType `json:"voucher_type" gorm:"uniqueIndex:product_code"`
+	ProductID   string      `json:"product_id" gorm:"size:32;uniqueIndex:product_code"`
+	Code        string      `json:"code" gorm:"size:100;uniqueIndex:product_code"`
 	Active      bool        `json:"active"`
-	Percentage  float64     `json:"percentage"`
-	Amount      float64     `json:"amount"`
+	Percentage  float64     `json:"percentage" gorm:"type:double(30,2)"`
+	Amount      float64     `json:"amount" gorm:"type:double(30,2)"`
 	Limit       uint        `json:"limit"`
 	ExpiresOn   time.Time   `json:"expires_on"`
 	gorm.Model

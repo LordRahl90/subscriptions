@@ -52,6 +52,7 @@ func (s *Server) planDetails(ctx *gin.Context) {
 	plan, err := s.planService.FindOne(ctx.Request.Context(), id)
 	if err != nil {
 		badRequestFromError(ctx, err)
+		return
 	}
 
 	success(ctx, responses.SubscriptionPlan{

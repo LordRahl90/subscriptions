@@ -29,6 +29,7 @@ func TestCreateNewProduct(t *testing.T) {
 	ctx := context.Background()
 
 	p := newProduct(t)
+	p.TaxRate = 34.5
 
 	t.Cleanup(func() {
 		db.Exec("DELETE FROM products WHERE id = ?", p.ID)

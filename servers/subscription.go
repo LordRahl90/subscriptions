@@ -195,7 +195,7 @@ func (s *Server) unpauseSubscription(ctx *gin.Context) {
 		return
 	}
 
-	success(ctx, "subscription cancelled successfully")
+	success(ctx, "subscription unpaused successfully")
 }
 
 func (s *Server) cancelSubscription(ctx *gin.Context) {
