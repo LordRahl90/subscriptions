@@ -48,7 +48,7 @@ func TestProcessWithoutDiscount(t *testing.T) {
 	}
 
 	vs := &mocks.VoucherMocks{
-		FindByCodeFunc: func(ctx context.Context, code string) (*vouchers.Voucher, error) {
+		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
 				VoucherType: vouchers.VoucherTypePercentage,
@@ -101,9 +101,10 @@ func TestProcessWithDiscount(t *testing.T) {
 	}
 
 	vs := &mocks.VoucherMocks{
-		FindByCodeFunc: func(ctx context.Context, code string) (*vouchers.Voucher, error) {
+		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
+				ProductID:   p.ProductID,
 				VoucherType: vouchers.VoucherTypePercentage,
 				Percentage:  10,
 				ExpiresOn:   time.Now().Add(24 * time.Hour),
@@ -154,9 +155,10 @@ func TestProcessWithExpiredDiscount(t *testing.T) {
 	}
 
 	vs := &mocks.VoucherMocks{
-		FindByCodeFunc: func(ctx context.Context, code string) (*vouchers.Voucher, error) {
+		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
+				ProductID:   p.ProductID,
 				VoucherType: vouchers.VoucherTypePercentage,
 				Percentage:  10,
 				ExpiresOn:   time.Now().Add(time.Duration(-48 * time.Hour)),

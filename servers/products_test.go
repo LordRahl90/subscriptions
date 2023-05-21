@@ -42,7 +42,6 @@ func TestCreateNewProduct(t *testing.T) {
 	assert.Equal(t, req.Name, response.Name)
 	assert.Equal(t, req.Description, response.Description)
 	assert.Equal(t, req.Tax, response.Tax)
-	assert.Equal(t, req.TrialExists, response.TrialExists)
 
 	db.Exec("DELETE FROM products WHERE id = ?", response.ID)
 }
@@ -66,7 +65,6 @@ func TestGetAllProducts(t *testing.T) {
 		require.NoError(t, server.productService.Create(ctx, &products.Product{
 			Name:        gofakeit.BuzzWord(),
 			Description: gofakeit.Word(),
-			TrialExists: true,
 			TaxRate:     10,
 		}))
 	}
@@ -94,7 +92,6 @@ func TestGetAllProducts(t *testing.T) {
 	assert.Equal(t, results[1].Name, response.Name)
 	assert.Equal(t, results[1].Description, response.Description)
 	assert.Equal(t, results[1].Tax, response.Tax)
-	assert.Equal(t, results[1].TrialExists, response.TrialExists)
 }
 
 func TestGetProductPlans(t *testing.T) {
@@ -102,7 +99,6 @@ func TestGetProductPlans(t *testing.T) {
 	p := &products.Product{
 		Name:        gofakeit.BuzzWord(),
 		Description: gofakeit.Word(),
-		TrialExists: true,
 		TaxRate:     10,
 	}
 	require.NoError(t, server.productService.Create(ctx, p))

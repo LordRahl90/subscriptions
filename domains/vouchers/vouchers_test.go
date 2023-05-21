@@ -97,7 +97,7 @@ func TestFindByCode(t *testing.T) {
 		pps = append(pps, p)
 	}
 
-	single, err := ps.FindByCode(ctx, pps[1].Code)
+	single, err := ps.FindByCode(ctx, pps[1].ProductID, pps[1].Code)
 	require.NoError(t, err)
 	require.NotEmpty(t, single)
 	assert.Equal(t, pps[1].ID, single.ID)

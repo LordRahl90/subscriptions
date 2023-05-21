@@ -56,9 +56,10 @@ func TestCreateSubscriptionWithDiscount(t *testing.T) {
 		},
 	}
 	vs := &mocks.VoucherMocks{
-		FindByCodeFunc: func(ctx context.Context, id string) (*vouchers.Voucher, error) {
+		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
+				ProductID:   req.ProductID,
 				VoucherType: vouchers.VoucherTypePercentage,
 				Percentage:  20,
 				ExpiresOn:   time.Now().Add(24 * time.Hour),
@@ -140,7 +141,7 @@ func TestCreateSubscriptionWithOutDiscount(t *testing.T) {
 		},
 	}
 	vs := &mocks.VoucherMocks{
-		FindByCodeFunc: func(ctx context.Context, id string) (*vouchers.Voucher, error) {
+		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
 				VoucherType: vouchers.VoucherTypePercentage,

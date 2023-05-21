@@ -10,5 +10,11 @@ test-integration:
 test-with-race:
 	go test -race -tags=integration ./... --cover
 
+build:
+	docker build -t lordrahl/subscriptions:latest .
+
+seed:
+	go run ./cmd/seed
+
 twr: test-with-race
 ti: test-integration

@@ -1,0 +1,46 @@
+version: '3.1'
+services:
+  subscriptions:
+    container_name: subscriptions
+    image: lordrahl/subscriptions:latest
+    entrypoint: ./subscriptions_api
+    ports:
+      - 8080:8080
+    environment:
+      ENVIRONMENT: "docker"
+      DB_HOST: subscriptionsdb
+      DB_PORT: 3306
+      DB_USER: sub_user
+      DB_PASSWORD: p@ssword
+      DB_NAME: subscriptions
+
+    depends_on:
+      subscriptionsdb:
+        condition: service_healthy
+
+    networks:
+      - subscriptions
+
+
+  subscriptionsdb:
+    container_name: subscriptions-db
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: sub_user
+      MYSQL_PASSWORD: p@ssword
+      MYSQL_DATABASE: subscriptions
+
+    networks:
+      - subscriptions
+
+    healthcheck: # check the healthiness with the following configuration
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '--user=sub_user', '--password=p@ssword']
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+networks:
+  subscriptions:
+    driver: bridge
+    

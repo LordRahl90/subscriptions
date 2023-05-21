@@ -42,10 +42,15 @@ func (ps Service) Process(ctx context.Context, p *Purchase) (*subscription.Subsc
 	}
 
 	if p.Voucher != "" {
-		v, err := ps.voucherService.FindByCode(ctx, p.Voucher)
+		v, err := ps.voucherService.FindByCode(ctx, p.ProductID, p.Voucher)
 		if err != nil {
 			return nil, err
 		}
+
+		if v.ProductID != p.ProductID {
+			return nil, fmt.Errorf("this voucher is not for this product")
+		}
+
 		if v.ExpiresOn.Before(time.Now()) {
 			return nil, fmt.Errorf("voucher has expired")
 		}

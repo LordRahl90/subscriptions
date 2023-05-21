@@ -12,7 +12,7 @@ var (
 // VoucherMocks mocks the voucher interface
 type VoucherMocks struct {
 	CreateFunc     func(ctx context.Context, v *vouchers.Voucher) error
-	FindByCodeFunc func(ctx context.Context, code string) (*vouchers.Voucher, error)
+	FindByCodeFunc func(ctx context.Context, productID, code string) (*vouchers.Voucher, error)
 	FindOneFunc    func(ctx context.Context, id string) (*vouchers.Voucher, error)
 }
 
@@ -25,11 +25,11 @@ func (vm *VoucherMocks) Create(ctx context.Context, v *vouchers.Voucher) error {
 }
 
 // FindByCode implements vouchers.Manager
-func (vm *VoucherMocks) FindByCode(ctx context.Context, code string) (*vouchers.Voucher, error) {
+func (vm *VoucherMocks) FindByCode(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 	if vm.FindByCodeFunc == nil {
 		return nil, errMockNotInitialized
 	}
-	return vm.FindByCodeFunc(ctx, code)
+	return vm.FindByCodeFunc(ctx, productID, code)
 }
 
 // FindOne implements vouchers.Manager

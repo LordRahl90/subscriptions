@@ -90,12 +90,11 @@ func FuzzCreateProduct(f *testing.F) {
 		log.Fatal(err)
 	}
 
-	f.Fuzz(func(t *testing.T, name, description string, tax float64, trial bool) {
+	f.Fuzz(func(t *testing.T, name, description string, tax float64) {
 		p := &Product{
 			Name:        name,
 			Description: description,
 			TaxRate:     tax,
-			TrialExists: trial,
 		}
 
 		err := ps.Create(ctx, p)

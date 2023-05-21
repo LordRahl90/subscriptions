@@ -30,7 +30,6 @@ func (s *Server) createProduct(ctx *gin.Context) {
 		Name:        req.Name,
 		Description: req.Description,
 		TaxRate:     req.Tax,
-		TrialExists: req.TrialExists,
 	}
 
 	if err := s.productService.Create(ctx, product); err != nil {
@@ -43,7 +42,6 @@ func (s *Server) createProduct(ctx *gin.Context) {
 		Name:        product.Name,
 		Description: product.Description,
 		Tax:         product.TaxRate,
-		TrialExists: product.TrialExists,
 		CreatedAt:   product.CreatedAt,
 		UpdatedAt:   product.UpdatedAt,
 	})
@@ -63,7 +61,6 @@ func (s *Server) allProducts(ctx *gin.Context) {
 			Name:        res[i].Name,
 			Description: res[i].Description,
 			Tax:         res[i].TaxRate,
-			TrialExists: res[i].TrialExists,
 			CreatedAt:   res[i].CreatedAt,
 			UpdatedAt:   res[i].UpdatedAt,
 		}
@@ -85,7 +82,6 @@ func (s *Server) singleProduct(ctx *gin.Context) {
 		Name:        res.Name,
 		Description: res.Description,
 		Tax:         res.TaxRate,
-		TrialExists: res.TrialExists,
 		CreatedAt:   res.CreatedAt,
 		UpdatedAt:   res.UpdatedAt,
 	})

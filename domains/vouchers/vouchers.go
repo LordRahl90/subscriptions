@@ -48,10 +48,10 @@ func (ps *VoucherService) FindOne(ctx context.Context, id string) (*Voucher, err
 }
 
 // FindOne finds a voucher with its code
-func (ps *VoucherService) FindByCode(ctx context.Context, code string) (*Voucher, error) {
+func (ps *VoucherService) FindByCode(ctx context.Context, productID, code string) (*Voucher, error) {
 	var result *Voucher
 	err := ps.db.WithContext(ctx).
-		Where("code = ?", code).
+		Where("product_id = ? AND code = ?", productID, code).
 		First(&result).Error
 	return result, err
 }
