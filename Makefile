@@ -1,5 +1,5 @@
 start:
-	go run ./cmd/
+	go run ./cmd/api/
 
 test:
 	go test ./... --cover

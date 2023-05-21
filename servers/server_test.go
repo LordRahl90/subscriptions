@@ -79,4 +79,7 @@ func setupTestDB() (*gorm.DB, error) {
 func cleanup() {
 	db.Exec("DELETE FROM users")
 	db.Exec("DELETE FROM products")
+	db.Exec("DELETE FROM subscription_plans")
+	db.Exec("DELETE FROM vouchers")
+	db.Exec("DELETE FROM subscriptions")
 }
