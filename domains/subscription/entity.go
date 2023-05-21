@@ -82,3 +82,16 @@ func (s Subscription) EndDate() time.Time {
 
 	return s.CreatedAt.Add(time.Duration(duration * uint(month)))
 }
+
+func (s Subscription) TrialEnds() time.Time {
+	return s.CreatedAt.Add(time.Duration(s.TrialPeriod * uint(month)))
+}
+
+// IsTrial determines if the subscription is still on trial or not
+func (s Subscription) IsTrial() bool {
+	if s.CreatedAt.IsZero() || s.TrialPeriod == 0 {
+		return false
+	}
+
+	return s.TrialEnds().After(time.Now())
+}

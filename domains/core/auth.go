@@ -13,7 +13,7 @@ var SigningSecret string
 
 // TokenData returns the base information storeed within a JWT token
 type TokenData struct {
-	UserID, Email string
+	UserID, Email, UserType string
 }
 
 // AuthClaims extra claims struct for using standard claims

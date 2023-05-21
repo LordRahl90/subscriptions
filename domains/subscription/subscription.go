@@ -38,7 +38,10 @@ func (ss *SubscriptionService) Create(ctx context.Context, p *Subscription) erro
 
 // Find returns all the subscriptions available to a user
 func (ss *SubscriptionService) Find(ctx context.Context, userID string) (result []Subscription, err error) {
-	err = ss.db.WithContext(ctx).Where("user_id = ?", userID).Find(&result).Error
+	err = ss.db.WithContext(ctx).
+		Where("user_id = ?", userID).
+		Order("created_at DESC").
+		Find(&result).Error
 	return
 }
 

@@ -115,23 +115,27 @@ func created(c *gin.Context, response interface{}) {
 func unAuthorized(c *gin.Context, err error) {
 	c.JSON(http.StatusUnauthorized, gin.H{
 		"success": false,
-		"message": err.Error(),
-		"data":    nil,
+		"error":   err.Error(),
 	})
 }
 
 func badRequestFromError(c *gin.Context, err error) {
 	c.JSON(http.StatusBadRequest, gin.H{
 		"success": false,
-		"message": err.Error(),
-		"data":    nil,
+		"error":   err.Error(),
+	})
+}
+
+func notFound(c *gin.Context) {
+	c.JSON(http.StatusNotFound, gin.H{
+		"success": false,
+		"error":   "not found",
 	})
 }
 
 func internalError(c *gin.Context, err error) {
 	c.JSON(http.StatusInternalServerError, gin.H{
 		"success": false,
-		"message": err.Error(),
-		"data":    nil,
+		"error":   err.Error(),
 	})
 }

@@ -8,7 +8,7 @@ test-integration:
 	go test -tags=integration ./... --cover
 
 test-with-race:
-	go test -race ./... --cover
+	go test -race -tags=integration ./... --cover
 
 twr: test-with-race
 ti: test-integration

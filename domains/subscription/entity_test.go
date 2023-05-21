@@ -143,3 +143,64 @@ func TestStatusFromString(t *testing.T) {
 		})
 	}
 }
+
+func TestIfSubscriptionIsOnTrial(t *testing.T) {
+	table := []struct {
+		name string
+		arg  Subscription
+		exp  bool
+	}{
+		{
+			name: "no created at",
+			arg:  Subscription{},
+			exp:  false,
+		},
+		{
+			name: "a week ago",
+			arg: Subscription{
+				TrialPeriod: 1,
+				Model: gorm.Model{
+					CreatedAt: time.Now().Add(time.Duration(-24 * 60 * 7 * time.Minute)),
+				},
+			},
+			exp: true,
+		},
+		{
+			name: "a month ago",
+			arg: Subscription{
+				TrialPeriod: 1,
+				Model: gorm.Model{
+					CreatedAt: time.Now().Add(time.Duration(-24 * 60 * 7 * 4 * time.Minute)),
+				},
+			},
+			exp: true,
+		},
+		{
+			name: "a month ago and 12 hours",
+			arg: Subscription{
+				TrialPeriod: 1,
+				Model: gorm.Model{
+					CreatedAt: time.Now().Add(time.Duration(-36 * 60 * 30 * time.Minute)),
+				},
+			},
+			exp: false,
+		},
+		{
+			name: "a month ago and a day",
+			arg: Subscription{
+				TrialPeriod: 1,
+				Model: gorm.Model{
+					CreatedAt: time.Now().Add(time.Duration(-48 * 60 * 7 * 4 * time.Minute)),
+				},
+			},
+			exp: false,
+		},
+	}
+
+	for _, tt := range table {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.arg.IsTrial()
+			require.Equal(t, tt.exp, got)
+		})
+	}
+}
