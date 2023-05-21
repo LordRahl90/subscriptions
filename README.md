@@ -12,5 +12,3 @@ The system provides administrative endpoints where operations like <br />
 * RUN `make seed`
 
 ## Usages
-
-[Postman Collection](https://api.postman.com/collections/1423804-492a8791-0766-4ed1-8819-e41423093110?access_key=PMAT-01H103YG6EZJ1299AGKRXY9DM8)
