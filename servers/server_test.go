@@ -1,3 +1,5 @@
+//go:build integration
+
 package servers
 
 import (
@@ -31,7 +33,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 	db = d
-	s, err := New(db)
+	s, err := NewWithDefaults(db)
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +43,6 @@ func TestMain(m *testing.M) {
 }
 
 func requestHelper(t *testing.T, method, path, token string, payload []byte) *httptest.ResponseRecorder {
-	fmt.Printf("\nToken: %s\n\n", token)
 	t.Helper()
 	w := httptest.NewRecorder()
 	var (

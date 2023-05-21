@@ -1,15 +1,14 @@
+//go:build integration
+
 package servers
 
 import (
 	"encoding/json"
 	"net/http"
-	"subscriptions/domains/core"
 	"subscriptions/requests"
 	"subscriptions/responses"
 	"testing"
 
-	"github.com/brianvoe/gofakeit"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -86,17 +85,4 @@ func TestCreateVoucherWithInvalidPercentage(t *testing.T) {
 	res := requestHelper(t, http.MethodPost, "/vouchers", token, b)
 	require.Equal(t, http.StatusBadRequest, res.Code)
 	println(res.Body.String())
-}
-
-func createToken(t *testing.T) string {
-	t.Helper()
-	td := core.TokenData{
-		UserID: uuid.NewString(),
-		Email:  gofakeit.Email(),
-	}
-	token, err := td.Generate()
-	require.NoError(t, err)
-	require.NotEmpty(t, token)
-
-	return token
 }

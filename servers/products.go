@@ -11,14 +11,14 @@ import (
 func (s *Server) productsRoute() {
 	product := s.Router.Group("products")
 	{
-		product.POST("", createProduct)
-		product.GET("", allProducts)
-		product.GET(":id", singleProduct)
-		product.GET(":id/plans", productPlans)
+		product.POST("", s.createProduct)
+		product.GET("", s.allProducts)
+		product.GET(":id", s.singleProduct)
+		product.GET(":id/plans", s.productPlans)
 	}
 }
 
-func createProduct(ctx *gin.Context) {
+func (s *Server) createProduct(ctx *gin.Context) {
 	var req *requests.Product
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -33,7 +33,7 @@ func createProduct(ctx *gin.Context) {
 		TrialExists: req.TrialExists,
 	}
 
-	if err := productService.Create(ctx, product); err != nil {
+	if err := s.productService.Create(ctx, product); err != nil {
 		internalError(ctx, err)
 		return
 	}
@@ -49,8 +49,8 @@ func createProduct(ctx *gin.Context) {
 	})
 }
 
-func allProducts(ctx *gin.Context) {
-	res, err := productService.Find(ctx.Request.Context())
+func (s *Server) allProducts(ctx *gin.Context) {
+	res, err := s.productService.Find(ctx.Request.Context())
 	if err != nil {
 		internalError(ctx, err)
 		return
@@ -72,9 +72,9 @@ func allProducts(ctx *gin.Context) {
 	success(ctx, result)
 }
 
-func singleProduct(ctx *gin.Context) {
+func (s *Server) singleProduct(ctx *gin.Context) {
 	id := ctx.Param("id")
-	res, err := productService.FindOne(ctx.Request.Context(), id)
+	res, err := s.productService.FindOne(ctx.Request.Context(), id)
 	if err != nil {
 		internalError(ctx, err)
 		return
@@ -91,9 +91,9 @@ func singleProduct(ctx *gin.Context) {
 	})
 }
 
-func productPlans(ctx *gin.Context) {
+func (s *Server) productPlans(ctx *gin.Context) {
 	productID := ctx.Param("id")
-	res, err := planService.Find(ctx.Request.Context(), productID)
+	res, err := s.planService.Find(ctx.Request.Context(), productID)
 	if err != nil {
 		internalError(ctx, err)
 		return

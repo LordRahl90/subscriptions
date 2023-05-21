@@ -13,11 +13,11 @@ func (s *Server) vouchersRoute() {
 	{
 		vouchers.GET("/:id/products", voucherProducts)
 		vouchers.POST("/valid", checkValidity)
-		vouchers.POST("", createVoucher)
+		vouchers.POST("", s.createVoucher)
 	}
 }
 
-func createVoucher(ctx *gin.Context) {
+func (s *Server) createVoucher(ctx *gin.Context) {
 	var req requests.Voucher
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -38,7 +38,7 @@ func createVoucher(ctx *gin.Context) {
 		return
 	}
 
-	if err := voucherService.Create(ctx.Request.Context(), voucher); err != nil {
+	if err := s.voucherService.Create(ctx.Request.Context(), voucher); err != nil {
 		internalError(ctx, err)
 		return
 	}

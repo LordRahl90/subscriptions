@@ -5,19 +5,17 @@ import (
 
 	"subscriptions/domains/plans"
 	"subscriptions/domains/products"
+	"subscriptions/domains/subscription"
 	"subscriptions/domains/users"
 	"subscriptions/domains/vouchers"
+	"subscriptions/services/purchase"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 var (
-	initError      error
-	userService    users.IUserService
-	productService products.Manager
-	voucherService vouchers.Manager
-	planService    plans.Manager
+	purchaseService *purchase.Service
 )
 
 // Server container for the server object
@@ -25,32 +23,70 @@ type Server struct {
 	Router        *gin.Engine
 	DB            *gorm.DB
 	SigningSecret string
+
+	userService         users.IUserService
+	productService      products.Manager
+	voucherService      vouchers.Manager
+	planService         plans.Manager
+	subscriptionService subscription.Manager
 }
 
-// New returns a new instance of server with the provided db
+// New returns a new server instance based on the injected services
+func New(
+	us users.IUserService,
+	ps products.Manager,
+	vs vouchers.Manager,
+	pls plans.Manager,
+	sbs subscription.Manager,
+) *Server {
+	purchaseService = purchase.New(ps, pls, vs, sbs)
+	s := &Server{
+		userService:         us,
+		productService:      ps,
+		planService:         pls,
+		subscriptionService: sbs,
+	}
+	s.setupRoutes()
+	return s
+}
+
+// NewWithDefaults returns a new instance of server with the defaults initialized with provided db
 // this also initializes all the necessary services.
-func New(db *gorm.DB) (*Server, error) {
-	userService, initError = users.New(db)
-	if initError != nil {
-		return nil, initError
+func NewWithDefaults(db *gorm.DB) (*Server, error) {
+	userService, err := users.New(db)
+	if err != nil {
+		return nil, err
 	}
 
-	productService, initError = products.New(db)
-	if initError != nil {
-		return nil, initError
+	productService, err := products.New(db)
+	if err != nil {
+		return nil, err
 	}
 
-	voucherService, initError = vouchers.New(db)
-	if initError != nil {
-		return nil, initError
+	voucherService, err := vouchers.New(db)
+	if err != nil {
+		return nil, err
 	}
 
-	planService, initError = plans.New(db)
-	if initError != nil {
-		return nil, initError
+	planService, err := plans.New(db)
+	if err != nil {
+		return nil, err
 	}
 
-	s := &Server{DB: db}
+	subscriptionService, err := subscription.New(db)
+	if err != nil {
+		return nil, err
+	}
+
+	purchaseService = purchase.New(productService, planService, voucherService, subscriptionService)
+	s := &Server{
+		DB:                  db,
+		userService:         userService,
+		productService:      productService,
+		voucherService:      voucherService,
+		planService:         planService,
+		subscriptionService: subscriptionService,
+	}
 	s.setupRoutes()
 	return s, nil
 }

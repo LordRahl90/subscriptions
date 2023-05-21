@@ -1,3 +1,5 @@
+//go:build integration
+
 package servers
 
 import (
@@ -71,7 +73,7 @@ func TestPlanDetails(t *testing.T) {
 			Duration:      3,
 			TrialDuration: 0,
 		}
-		require.NoError(t, planService.Create(ctx, v))
+		require.NoError(t, server.planService.Create(ctx, v))
 		pPlans[i] = v
 	}
 

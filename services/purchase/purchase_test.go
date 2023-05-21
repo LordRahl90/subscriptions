@@ -15,12 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var (
-// ps  products.Manager
-// pls plans.Manager
-// vs  vouchers.Manager
-)
-
 func TestMain(m *testing.M) {
 	code := 1
 	defer func() {

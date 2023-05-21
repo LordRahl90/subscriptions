@@ -11,12 +11,12 @@ import (
 func (s *Server) plansRoute() {
 	plans := s.Router.Group("plans")
 	{
-		plans.GET("/:id", planDetails)
-		plans.POST("", createPlan)
+		plans.GET("/:id", s.planDetails)
+		plans.POST("", s.createPlan)
 	}
 }
 
-func createPlan(ctx *gin.Context) {
+func (s *Server) createPlan(ctx *gin.Context) {
 	var req requests.SubscriptionPlan
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		badRequestFromError(ctx, err)
@@ -30,7 +30,7 @@ func createPlan(ctx *gin.Context) {
 		TrialDuration: req.TrialDuration,
 	}
 
-	if err := planService.Create(ctx.Request.Context(), plan); err != nil {
+	if err := s.planService.Create(ctx.Request.Context(), plan); err != nil {
 		internalError(ctx, err)
 		return
 	}
@@ -47,9 +47,9 @@ func createPlan(ctx *gin.Context) {
 
 }
 
-func planDetails(ctx *gin.Context) {
+func (s *Server) planDetails(ctx *gin.Context) {
 	id := ctx.Param("id")
-	plan, err := planService.FindOne(ctx.Request.Context(), id)
+	plan, err := s.planService.FindOne(ctx.Request.Context(), id)
 	if err != nil {
 		badRequestFromError(ctx, err)
 	}

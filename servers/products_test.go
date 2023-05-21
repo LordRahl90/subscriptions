@@ -1,3 +1,5 @@
+//go:build integration
+
 package servers
 
 import (
@@ -63,7 +65,7 @@ func TestCreateWithInvalidJSON(t *testing.T) {
 func TestGetAllProducts(t *testing.T) {
 	ctx := context.Background()
 	for i := 1; i <= 3; i++ {
-		require.NoError(t, productService.Create(ctx, &products.Product{
+		require.NoError(t, server.productService.Create(ctx, &products.Product{
 			Name:        gofakeit.BuzzWord(),
 			Description: gofakeit.Word(),
 			TrialExists: true,
@@ -105,7 +107,7 @@ func TestGetProductPlans(t *testing.T) {
 		TrialExists: true,
 		TaxRate:     10,
 	}
-	require.NoError(t, productService.Create(ctx, p))
+	require.NoError(t, server.productService.Create(ctx, p))
 	for i := 0; i < 3; i++ {
 		v := &plans.SubscriptionPlan{
 			ProductID:     p.ID,
@@ -113,7 +115,7 @@ func TestGetProductPlans(t *testing.T) {
 			Duration:      3,
 			TrialDuration: 0,
 		}
-		require.NoError(t, planService.Create(ctx, v))
+		require.NoError(t, server.planService.Create(ctx, v))
 	}
 
 	res := requestHelper(t, http.MethodGet, "/products/"+p.ID+"/plans", "", nil)

@@ -18,7 +18,7 @@ func (s *Server) authenticate(ctx *gin.Context) {
 		return
 	}
 
-	res, err := userService.FindByEmail(ctx.Request.Context(), req.Email)
+	res, err := s.userService.FindByEmail(ctx.Request.Context(), req.Email)
 	if err != nil {
 		badRequestFromError(ctx, fmt.Errorf("email not registered"))
 		return
@@ -65,7 +65,7 @@ func (s *Server) createUser(ctx *gin.Context) {
 		Password: user.Password,
 	}
 
-	err := userService.Create(ctx.Request.Context(), dbUser)
+	err := s.userService.Create(ctx.Request.Context(), dbUser)
 	if err != nil {
 		badRequestFromError(ctx, err)
 		return

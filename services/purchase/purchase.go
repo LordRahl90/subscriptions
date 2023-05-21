@@ -8,8 +8,8 @@ import (
 	"subscriptions/domains/vouchers"
 )
 
-// PurchaseService contains the sales logic handling
-type PurchaseService struct {
+// Service contains the sales logic handling
+type Service struct {
 	productService      products.Manager
 	planService         plans.Manager
 	voucherService      vouchers.Manager
@@ -17,8 +17,8 @@ type PurchaseService struct {
 }
 
 // New initializes a new purchase service
-func New(ps products.Manager, pls plans.Manager, vs vouchers.Manager, sbs subscription.Manager) *PurchaseService {
-	return &PurchaseService{
+func New(ps products.Manager, pls plans.Manager, vs vouchers.Manager, sbs subscription.Manager) *Service {
+	return &Service{
 		productService:      ps,
 		planService:         pls,
 		voucherService:      vs,
@@ -27,7 +27,7 @@ func New(ps products.Manager, pls plans.Manager, vs vouchers.Manager, sbs subscr
 }
 
 // Process takes the purchase DTO and uses it to create a new subscription
-func (ps PurchaseService) Process(ctx context.Context, p *Purchase) (*subscription.Subscription, error) {
+func (ps Service) Process(ctx context.Context, p *Purchase) (*subscription.Subscription, error) {
 	var voucher vouchers.Voucher
 	product, err := ps.productService.FindOne(ctx, p.ProductID)
 	if err != nil {
