@@ -12,7 +12,9 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+var (
+	db *gorm.DB
+)
 
 func TestMain(m *testing.M) {
 	code := 1
@@ -36,8 +38,8 @@ func TestCreateNewSubscription(t *testing.T) {
 		Amount:             2000,
 		Discount:           500,
 		Tax:                200,
-		Trial:              false,
-		Status:             UpdateActionUnpaused,
+		TrialPeriod:        1,
+		Status:             StatusActive,
 	}
 
 	t.Cleanup(func() {
@@ -69,7 +71,6 @@ func TestFindSubscriptions(t *testing.T) {
 
 	t.Cleanup(func() {
 		ids := make([]string, len(pps))
-		println("pps len", len(pps))
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
@@ -77,7 +78,7 @@ func TestFindSubscriptions(t *testing.T) {
 	})
 
 	for i := 1; i <= 3; i++ {
-		p := newSubscription(t)
+		p := newSubscription(t, userID, StatusActive)
 		require.NoError(t, ps.Create(ctx, p))
 		pps = append(pps, p)
 	}
@@ -90,10 +91,95 @@ func TestFindSubscriptions(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, single)
 
-	// assert.Equal(t, pps[1].ID, single.ID)
-	// assert.Equal(t, pps[1].Name, single.Name)
-	// assert.Equal(t, pps[1].Description, single.Description)
-	// assert.Equal(t, pps[1].Tax, single.Tax)
+	assert.Equal(t, pps[1].ID, single.ID)
+	assert.Equal(t, pps[1].UserID, single.UserID)
+	assert.Equal(t, pps[1].Tax, single.Tax)
+	assert.Equal(t, pps[1].Duration, single.Duration)
+	assert.Equal(t, pps[1].Discount, single.Discount)
+}
+
+func TestFindSubscriptionsByStatus(t *testing.T) {
+	ctx := context.Background()
+	ps, err := New(db)
+	require.NoError(t, err)
+	require.NotNil(t, ps)
+
+	pps := []*Subscription{}
+	userID := primitive.NewObjectID().Hex()
+	status := []Status{StatusActive, StatusPaused, StatusCancelled, StatusEnded, StatusActive, StatusEnded}
+
+	t.Cleanup(func() {
+		ids := make([]string, len(pps))
+		for i := range pps {
+			ids[i] = pps[i].ID
+		}
+		db.Exec("DELETE FROM subscriptions WHERE id IN ?", ids)
+	})
+
+	for i := range status {
+		p := newSubscription(t, userID, status[i])
+		require.NoError(t, ps.Create(ctx, p))
+		pps = append(pps, p)
+	}
+
+	res, err := ps.FindByStatus(ctx, userID, StatusActive)
+	require.NoError(t, err)
+	require.Len(t, res, 2)
+
+	res, err = ps.FindByStatus(ctx, userID, StatusPaused)
+	require.NoError(t, err)
+	require.Len(t, res, 1)
+
+	res, err = ps.FindByStatus(ctx, userID, StatusCancelled)
+	require.NoError(t, err)
+	require.Len(t, res, 1)
+
+	res, err = ps.FindByStatus(ctx, userID, StatusEnded)
+	require.NoError(t, err)
+	require.Len(t, res, 2)
+}
+
+func TestUpdateStatus(t *testing.T) {
+	ctx := context.Background()
+	userID := primitive.NewObjectID().Hex()
+
+	s := &Subscription{
+		UserID:             userID,
+		ProductID:          primitive.NewObjectID().Hex(),
+		SubscriptionPlanID: primitive.NewObjectID().Hex(),
+		Duration:           4,
+		Amount:             2000,
+		Discount:           500,
+		Tax:                200,
+		TrialPeriod:        1,
+		Status:             StatusActive,
+	}
+
+	t.Cleanup(func() {
+		println("cleaning up")
+		db.Exec("DELETE FROM subscriptions WHERE id = ?", s.ID)
+	})
+
+	ps, err := New(db)
+	require.NoError(t, err)
+	require.NotNil(t, ps)
+
+	err = ps.Create(ctx, s)
+	require.NoError(t, err)
+	require.NotEmpty(t, s.ID)
+
+	err = ps.UpdateStatus(ctx, s.ID, StatusPaused)
+	require.NoError(t, err)
+
+	res, err := ps.FindOne(ctx, s.ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, res)
+
+	assert.Equal(t, StatusPaused, res.Status)
+
+	results, err := ps.FindByStatus(ctx, userID, StatusPaused)
+	require.NoError(t, err)
+	require.Len(t, results, 1)
 }
 
 func setupTestDB() *gorm.DB {
@@ -109,12 +195,17 @@ func setupTestDB() *gorm.DB {
 	return db
 }
 
-func newSubscription(t *testing.T) *Subscription {
+func newSubscription(t *testing.T, userID string, status Status) *Subscription {
 	t.Helper()
 	return &Subscription{
-		// Name:        gofakeit.Name(),
-		// Description: gofakeit.Word(),
-		// Tax:         25.0,
+		UserID:             userID,
+		ProductID:          primitive.NewObjectID().Hex(),
+		SubscriptionPlanID: primitive.NewObjectID().Hex(),
+		Duration:           3,
+		Amount:             2000,
+		Discount:           200,
+		Tax:                200,
+		Status:             status,
 	}
 }
 

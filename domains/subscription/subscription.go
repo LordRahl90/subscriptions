@@ -2,19 +2,19 @@ package subscription
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gorm.io/gorm"
 )
 
-var _ Manager = (*SubscriptionService)(nil)
+var (
+	_ Manager = (*SubscriptionService)(nil)
+)
 
 // SubscriptionService implements the Manager interface
 type SubscriptionService struct {
 	db *gorm.DB
-	m  *sync.Mutex
 }
 
 // New returns a new instance of subscription service
@@ -22,9 +22,9 @@ func New(db *gorm.DB) (*SubscriptionService, error) {
 	if err := db.AutoMigrate(&Subscription{}); err != nil {
 		return nil, err
 	}
+
 	return &SubscriptionService{
 		db: db,
-		m:  &sync.Mutex{},
 	}, nil
 }
 
@@ -39,7 +39,7 @@ func (ss *SubscriptionService) Create(ctx context.Context, p *Subscription) erro
 // Find returns all the subscriptions available to a user
 // we might need a flag here to only return active subscriptions
 func (ss *SubscriptionService) Find(ctx context.Context, userID string) (result []Subscription, err error) {
-	err = ss.db.WithContext(ctx).Find(&result).Error
+	err = ss.db.WithContext(ctx).Where("user_id = ?", userID).Find(&result).Error
 	return
 }
 
@@ -50,7 +50,19 @@ func (ss *SubscriptionService) FindOne(ctx context.Context, id string) (*Subscri
 	return result, err
 }
 
-// Update implements Manager
-func (*SubscriptionService) Update(ctx context.Context, subID string) {
-	panic("unimplemented")
+// FindByStatus finds a user's subscription based on the status
+func (ss *SubscriptionService) FindByStatus(ctx context.Context, userID string, status Status) (result []Subscription, err error) {
+	err = ss.db.
+		WithContext(ctx).
+		Where("user_id = ? AND status = ?", userID, status).
+		Find(&result).Error
+	return
+}
+
+// UpdateStatus updates the subscritpion status
+func (ss *SubscriptionService) UpdateStatus(ctx context.Context, subID string, status Status) error {
+	return ss.db.WithContext(ctx).
+		Model(&Subscription{}).
+		Where("id = ?", subID).
+		Update("status", status).Error
 }
