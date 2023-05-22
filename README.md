@@ -34,8 +34,6 @@ Response: 201
     "id": "646a8ed27e31426e275edeb6",
     "name": "Angelina Emmerich",
     "email": "terrillrolfson@anderson.org",
-    "gender": "",
-    "age": 0,
     "token": "{ACCESS_TOKEN}",
     "created_at": "2023-05-21T23:36:18.820031+02:00"
 }
@@ -59,8 +57,6 @@ Response:
     "id": "646a8ed27e31426e275edeb6",
     "name": "Angelina Emmerich",
     "email": "terrillrolfson@anderson.org",
-    "gender": "",
-    "age": 0,
     "token": "{ACCESS_TOKEN}",
     "created_at": "2023-05-21T23:36:18.82+02:00"
 }
