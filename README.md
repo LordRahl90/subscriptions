@@ -13,7 +13,7 @@ The system provides administrative endpoints where operations like <br />
 
 ## Usage
 > Some endpoints need authorization. <br />
-> Assumption is that the server runs on `localhost:8080`
+> Assumption is that the server runs on `localhost:8080` <br />
 > `{BEARER_TOKEN}`/`{ACCESS_TOKEN}` are placeholders.
 
 ### Create User
