@@ -30,7 +30,7 @@ func (t *TokenData) Generate() (string, error) {
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)), // make it expire in a month
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
-			Issuer:    "zssn-manager",
+			Issuer:    "subs-manager",
 			Subject:   "auth-token",
 			ID:        t.UserID,
 		},

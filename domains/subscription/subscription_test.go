@@ -12,9 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	db *gorm.DB
-)
+var db *gorm.DB
 
 func TestMain(m *testing.M) {
 	code := 1

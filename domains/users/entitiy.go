@@ -4,6 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// UserType defines the type of user for access management.
 type UserType string
 
 const (

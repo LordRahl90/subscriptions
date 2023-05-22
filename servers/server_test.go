@@ -2,7 +2,6 @@ package servers
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -14,9 +13,9 @@ import (
 )
 
 var (
-	server *Server
-	db     *gorm.DB
-
+	server        *Server
+	db            *gorm.DB
+	initErr       error
 	signingSecret = "hello-world"
 )
 
@@ -26,11 +25,10 @@ func TestMain(m *testing.M) {
 		cleanup()
 		os.Exit(code)
 	}()
-	d, err := setupTestDB()
-	if err != nil {
-		panic(err)
+	db, initErr = setupTestDB()
+	if initErr != nil {
+		panic(initErr)
 	}
-	db = d
 	s, err := NewWithDefaults(db)
 	if err != nil {
 		panic(err)
@@ -52,7 +50,6 @@ func requestHelper(t *testing.T, method, path, token string, payload []byte) *ht
 		req, err = http.NewRequest(method, path, nil)
 	} else {
 		req, err = http.NewRequest(method, path, bytes.NewBuffer(payload))
-		fmt.Printf("\n\nRequest: %s\n\n", payload)
 	}
 
 	require.NoError(t, err)
@@ -62,8 +59,6 @@ func requestHelper(t *testing.T, method, path, token string, payload []byte) *ht
 	}
 	server.Router.ServeHTTP(w, req)
 	require.NotNil(t, w)
-
-	fmt.Printf("\n\nResponse: %s\n\n", w.Body.String())
 	return w
 }
 

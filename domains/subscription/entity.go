@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// UpdateAction type of action that can happen on subscription updates
+// Status subscription status
 type Status int
 
 const (
@@ -83,6 +83,7 @@ func (s Subscription) EndDate() time.Time {
 	return s.CreatedAt.Add(time.Duration(duration * uint(month)))
 }
 
+// TrialEnds computes date that this subscription ends
 func (s Subscription) TrialEnds() time.Time {
 	return s.CreatedAt.Add(time.Duration(s.TrialPeriod * uint(month)))
 }

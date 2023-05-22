@@ -8,7 +8,7 @@ type CreateUser struct {
 	UserType string `json:"user_type"`
 }
 
-// Authenticate requests format for authenticating user
+// Authenticate requests DTO for authenticating user
 type Authenticate struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`

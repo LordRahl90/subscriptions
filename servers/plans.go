@@ -44,7 +44,6 @@ func (s *Server) createPlan(ctx *gin.Context) {
 		CreatedAt:     plan.CreatedAt,
 		UpdatedAt:     plan.UpdatedAt,
 	})
-
 }
 
 func (s *Server) planDetails(ctx *gin.Context) {

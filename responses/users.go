@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// User user response struct
+// User response DTO for users
 type User struct {
 	ID        string     `json:"id"`
 	Name      string     `json:"name"`

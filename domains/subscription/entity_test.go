@@ -145,6 +145,7 @@ func TestStatusFromString(t *testing.T) {
 }
 
 func TestIfSubscriptionIsOnTrial(t *testing.T) {
+	t.Parallel()
 	table := []struct {
 		name string
 		arg  Subscription

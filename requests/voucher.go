@@ -2,7 +2,7 @@ package requests
 
 import "time"
 
-// Voucher DTO for voucher requests
+// Voucher request DTO for voucher requests
 type Voucher struct {
 	VoucherType string    `json:"voucher_type" binding:"required"`
 	ProductID   string    `json:"product_id" binding:"required"`

@@ -65,11 +65,11 @@ func (s *Server) createUser(ctx *gin.Context) {
 		Password: user.Password,
 	}
 
-	err := s.userService.Create(ctx.Request.Context(), dbUser)
-	if err != nil {
+	if err := s.userService.Create(ctx.Request.Context(), dbUser); err != nil {
 		badRequestFromError(ctx, err)
 		return
 	}
+
 	td := core.TokenData{
 		UserID: dbUser.ID,
 		Email:  dbUser.Email,

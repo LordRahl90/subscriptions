@@ -14,16 +14,13 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	purchaseService *purchase.Service
-)
+var purchaseService *purchase.Service
 
 // Server container for the server object
 type Server struct {
-	Router        *gin.Engine
-	DB            *gorm.DB
-	SigningSecret string
-
+	Router              *gin.Engine
+	DB                  *gorm.DB
+	SigningSecret       string
 	userService         users.IUserService
 	productService      products.Manager
 	voucherService      vouchers.Manager

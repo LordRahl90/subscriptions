@@ -3,11 +3,12 @@ package purchase
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"subscriptions/domains/plans"
 	"subscriptions/domains/products"
 	"subscriptions/domains/subscription"
 	"subscriptions/domains/vouchers"
-	"time"
 )
 
 // Service contains the sales logic handling
@@ -65,7 +66,6 @@ func (ps Service) Process(ctx context.Context, p *Purchase) (*subscription.Subsc
 	tax := taxRate / 100 * subTotal
 	total := subTotal + tax
 
-	// All new subscriptions are active
 	sub := &subscription.Subscription{
 		UserID:             p.UserID,
 		ProductID:          p.ProductID,
@@ -77,7 +77,8 @@ func (ps Service) Process(ctx context.Context, p *Purchase) (*subscription.Subsc
 		Tax:                tax,
 		Total:              total,
 		TrialPeriod:        plan.TrialDuration,
-		Status:             subscription.StatusActive,
+		// All new subscriptions are active
+		Status: subscription.StatusActive,
 	}
 	if err := ps.subscriptionService.Create(ctx, sub); err != nil {
 		return nil, err

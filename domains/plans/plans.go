@@ -43,7 +43,6 @@ func (ps *SubscriptionPlanService) Find(ctx context.Context, productID string) (
 func (ps *SubscriptionPlanService) FindOne(ctx context.Context, id string) (*SubscriptionPlan, error) {
 	var result *SubscriptionPlan
 	err := ps.db.WithContext(ctx).
-		// Preload("Products").
 		Where("id = ?", id).
 		First(&result).Error
 	return result, err

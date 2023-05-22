@@ -1,6 +1,6 @@
 package requests
 
-// SubscriptionPlan DTO for products subscription plans
+// SubscriptionPlan request DTO for products subscription plans
 type SubscriptionPlan struct {
 	ProductID     string  `json:"product_id" binding:"required"`
 	Amount        float64 `json:"amount" binding:"required"`

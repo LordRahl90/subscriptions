@@ -815,7 +815,6 @@ func requestHelperWithMockedServer(t *testing.T, s *Server, method, path, token 
 		req, err = http.NewRequest(method, path, nil)
 	} else {
 		req, err = http.NewRequest(method, path, bytes.NewBuffer(payload))
-		fmt.Printf("\n\nRequest: %s\n\n", payload)
 	}
 
 	require.NoError(t, err)
@@ -826,6 +825,5 @@ func requestHelperWithMockedServer(t *testing.T, s *Server, method, path, token 
 	s.Router.ServeHTTP(w, req)
 	require.NotNil(t, w)
 
-	fmt.Printf("\n\nResponse: %s\n\n", w.Body.String())
 	return w
 }
