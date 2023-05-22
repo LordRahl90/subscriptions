@@ -11,7 +11,6 @@ The system provides administrative endpoints where operations like <br />
 * RUN `cp .env.example .env` and fill out the database connection environment variables
 * RUN `make seed`
 
-
 ### Start Up
 #### Local
  * RUN `cp .env.example .env` and setup the database values
