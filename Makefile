@@ -13,6 +13,9 @@ test-with-race:
 build:
 	docker build -t lordrahl/subscriptions:latest .
 
+docker-start: build
+	docker-compose up
+
 seed:
 	go run ./cmd/seed
 

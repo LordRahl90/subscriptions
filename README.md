@@ -11,6 +11,16 @@ The system provides administrative endpoints where operations like <br />
 * RUN `cp .env.example .env` and fill out the database connection environment variables
 * RUN `make seed`
 
+
+### Start Up
+#### Local
+ * RUN `cp .env.example .env` and setup the database values
+ * RUN `make start`
+
+#### Docker
+* RUN `make docker-start`
+
+
 ## Usage
 > Some endpoints need authorization. <br />
 > Assumption is that the server runs on `localhost:8080` <br />

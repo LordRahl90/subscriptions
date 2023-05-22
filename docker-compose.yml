@@ -30,6 +30,8 @@ services:
       MYSQL_USER: sub_user
       MYSQL_PASSWORD: p@ssword
       MYSQL_DATABASE: subscriptions
+    volumes:
+      - ./seed:/docker-entrypoint-initdb.d
 
     networks:
       - subscriptions

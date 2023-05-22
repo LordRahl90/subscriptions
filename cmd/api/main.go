@@ -13,8 +13,11 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		panic(err)
+	env := os.Getenv("ENVIRONMENT")
+	if env == "" || env == "development" {
+		if err := godotenv.Load(); err != nil {
+			panic(err)
+		}
 	}
 
 	db, err := setupDB()
