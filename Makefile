@@ -16,8 +16,10 @@ build:
 docker-start: build
 	docker-compose up
 
-seed:
+.PHONY: seed
+seed: 
 	go run ./cmd/seed
 
 twr: test-with-race
 ti: test-integration
+ds: docker-start

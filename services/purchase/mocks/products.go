@@ -12,9 +12,18 @@ var (
 
 // ProductMock mock products
 type ProductMock struct {
-	CreateFunc  func(ctx context.Context, p *products.Product) error
-	FindFunc    func(ctx context.Context) ([]products.Product, error)
-	FindOneFunc func(ctx context.Context, id string) (*products.Product, error)
+	CreateFunc    func(ctx context.Context, p *products.Product) error
+	FindFunc      func(ctx context.Context) ([]products.Product, error)
+	FindOneFunc   func(ctx context.Context, id string) (*products.Product, error)
+	FindByIDsFunc func(ctx context.Context, ids ...string) (map[string]products.Product, error)
+}
+
+// FindByIDs mocks finding products by IDs
+func (pm *ProductMock) FindByIDs(ctx context.Context, ids ...string) (map[string]products.Product, error) {
+	if pm.FindByIDsFunc == nil {
+		return nil, errMockNotInitialized
+	}
+	return pm.FindByIDsFunc(ctx, ids...)
 }
 
 // Create mocks creating a new product

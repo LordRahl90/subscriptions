@@ -7,6 +7,7 @@ type Subscription struct {
 	ID            string    `json:"id"`
 	StartDate     time.Time `json:"start_date"`
 	EndDate       time.Time `json:"end_date"`
+	Product       string    `json:"product"`
 	Duration      uint      `json:"duration"`
 	TrialDuration uint      `json:"trial_duration"`
 	TotalDuration uint      `json:"total_duration"`

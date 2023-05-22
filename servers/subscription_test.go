@@ -45,6 +45,16 @@ func TestCreateSubscriptionWithDiscount(t *testing.T) {
 				TaxRate: 20,
 			}, nil
 		},
+		FindByIDsFunc: func(ctx context.Context, ids ...string) (map[string]products.Product, error) {
+			result := make(map[string]products.Product)
+			for i := range ids {
+				result[ids[i]] = products.Product{
+					ID:   ids[i],
+					Name: gofakeit.BeerAlcohol(),
+				}
+			}
+			return result, nil
+		},
 	}
 	pls := &mocks.SubscritionPlanMock{
 		FindOneFunc: func(ctx context.Context, id string) (*plans.SubscriptionPlan, error) {
@@ -227,8 +237,20 @@ func TestGetUserSubscriptions(t *testing.T) {
 			}, nil
 		},
 	}
+	ps := &mocks.ProductMock{
+		FindByIDsFunc: func(ctx context.Context, ids ...string) (map[string]products.Product, error) {
+			result := make(map[string]products.Product)
+			for i := range ids {
+				result[ids[i]] = products.Product{
+					ID:   ids[i],
+					Name: gofakeit.BeerAlcohol(),
+				}
+			}
+			return result, nil
+		},
+	}
 
-	svr := New(nil, nil, nil, nil, sbs)
+	svr := New(nil, ps, nil, nil, sbs)
 	res := requestHelperWithMockedServer(t, svr, http.MethodGet, "/subscriptions", token, nil)
 
 	require.Equal(t, http.StatusOK, res.Code)

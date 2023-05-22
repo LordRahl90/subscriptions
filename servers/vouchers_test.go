@@ -86,5 +86,6 @@ func TestCreateVoucherWithInvalidPercentage(t *testing.T) {
 
 	res := requestHelper(t, http.MethodPost, "/vouchers", token, b)
 	require.Equal(t, http.StatusBadRequest, res.Code)
-	println(res.Body.String())
+	exp := `{"error":"percentage cannot be more than 100","success":false}`
+	assert.Equal(t, exp, res.Body.String())
 }

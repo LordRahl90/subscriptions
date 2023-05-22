@@ -74,6 +74,15 @@ func (s *Server) userSubscriptions(ctx *gin.Context) {
 		internalError(ctx, err)
 		return
 	}
+	productIDs := make([]string, len(res))
+	for i := range res {
+		productIDs[i] = res[i].ProductID
+	}
+	productsMap, err := s.productService.FindByIDs(ctx.Request.Context(), productIDs...)
+	if err != nil {
+		internalError(ctx, err)
+		return
+	}
 
 	response := make([]responses.Subscription, len(res))
 	for i := range res {
@@ -89,6 +98,10 @@ func (s *Server) userSubscriptions(ctx *gin.Context) {
 			Discount:      res[i].Discount,
 			Total:         res[i].Total,
 			Status:        res[i].Status.String(),
+		}
+
+		if product, ok := productsMap[res[i].ProductID]; ok {
+			response[i].Product = product.Name
 		}
 	}
 	success(ctx, response)

@@ -18,10 +18,12 @@ The system provides administrative endpoints where operations like <br />
  * RUN `make start`
 
 #### Docker
-* RUN `make docker-start`
+* RUN `make ds`
+
+>PS: starting up with docker the first time might fail because of the initial seeding, as that passes the health check but the database won't be ready. If this happens, please re-run the command and it should start normally.
 
 
-## Usage
+## API Usage
 > Some endpoints need authorization. <br />
 > Assumption is that the server runs on `localhost:8080` <br />
 > `{BEARER_TOKEN}`/`{ACCESS_TOKEN}` are placeholders.
@@ -148,7 +150,7 @@ curl --location 'localhost:8080/subscriptions' \
 ```
 
 ### Buy Single Product with a voucher
-> A `voucher` code can be provided. If the voucher is invalid, an error is returned
+> A `voucher` code should be provided. If the voucher is invalid, an error is returned
 ```bash
 curl --location 'localhost:8080/subscriptions' \
 --header 'Content-Type: application/json' \

@@ -48,3 +48,17 @@ func (ps *ProductService) FindOne(ctx context.Context, id string) (*Product, err
 	err := ps.db.WithContext(ctx).Where("id = ?", id).First(&result).Error
 	return result, err
 }
+
+// FindByIDs finds products by the provided IDs
+func (ps *ProductService) FindByIDs(ctx context.Context, ids ...string) (map[string]Product, error) {
+	var result []Product
+	if err := ps.db.WithContext(ctx).Debug().Where("id IN (?)", ids).Find(&result).Error; err != nil {
+		return nil, err
+	}
+	response := make(map[string]Product)
+	for i := range result {
+		response[result[i].ID] = result[i]
+	}
+
+	return response, nil
+}

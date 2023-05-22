@@ -33,6 +33,7 @@ func main() {
 	if err := loadUsers(ctx, db); err != nil {
 		panic(err)
 	}
+
 	fmt.Println("seeding completed")
 }
 
