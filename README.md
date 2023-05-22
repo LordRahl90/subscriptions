@@ -14,6 +14,7 @@ The system provides administrative endpoints where operations like <br />
 ## Usage
 > Some endpoints need authorization. <br />
 > Assumption is that the server runs on `localhost:8080`
+> `{BEARER_TOKEN}`/`{ACCESS_TOKEN}` are placeholders.
 
 ### Create User
 Request:
@@ -112,7 +113,7 @@ curl --location 'localhost:8080/plans' \
 ```
 
 ### Create Trial Subscription Plan
-> Setting the trial duration to the number of desired months
+> Setting the `trial_duration` to the number of desired months
 ```bash
 curl --location 'localhost:8080/plans' \
 --header 'Content-Type: application/json' \
@@ -137,7 +138,7 @@ curl --location 'localhost:8080/subscriptions' \
 ```
 
 ### Buy Single Product with a voucher
-> A voucher code can be provided. If the voucher is invalid, an error is returned
+> A `voucher` code can be provided. If the voucher is invalid, an error is returned
 ```bash
 curl --location 'localhost:8080/subscriptions' \
 --header 'Content-Type: application/json' \
