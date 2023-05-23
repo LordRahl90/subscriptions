@@ -13,7 +13,10 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+var (
+	db        *gorm.DB
+	initError error
+)
 
 func TestMain(m *testing.M) {
 	code := 1
@@ -21,7 +24,10 @@ func TestMain(m *testing.M) {
 		cleanup()
 		os.Exit(code)
 	}()
-	db = setupTestDB()
+	db, initError = setupTestDB()
+	if initError != nil {
+		log.Fatal(initError)
+	}
 	code = m.Run()
 }
 
@@ -90,17 +96,14 @@ func TestFindSubscriptionPlans(t *testing.T) {
 	assert.Equal(t, pps[1].TrialDuration, single.TrialDuration)
 }
 
-func setupTestDB() *gorm.DB {
+func setupTestDB() (*gorm.DB, error) {
 	env := os.Getenv("ENVIRONMENT")
 	dsn := "root:@tcp(127.0.0.1:3306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	if env == "cicd" {
 		dsn = "test_user:password@tcp(127.0.0.1:33306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	}
-	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	return database
+
+	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
 }
 
 func newSubscriptionPlan(t *testing.T, productID string) *SubscriptionPlan {
