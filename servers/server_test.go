@@ -3,6 +3,7 @@ package servers
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -28,11 +29,14 @@ func TestMain(m *testing.M) {
 	}()
 	db, initErr = setupTestDB()
 	if initErr != nil {
-		panic(initErr)
+		log.Fatal(initErr)
+	}
+	if db == nil {
+		log.Fatal("cannot initialize database")
 	}
 	s, err := NewWithDefaults(db)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	server = s
 	server.SigningSecret = signingSecret
