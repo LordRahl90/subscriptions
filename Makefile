@@ -8,7 +8,7 @@ test-integration:
 	go test -tags=integration ./... --cover
 
 test-with-race:
-	go test -race -tags=integration ./... --cover
+	go test -race ./... --cover
 
 build:
 	docker build -t lordrahl/subscriptions:latest .
