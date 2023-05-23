@@ -115,5 +115,7 @@ func newSubscriptionPlan(t *testing.T, productID string) *SubscriptionPlan {
 }
 
 func cleanup() {
-	db.Exec("DELETE FROM subscription_plans")
+	if err := db.Exec("DELETE FROM subscription_plans"); err != nil {
+		log.Fatal(err)
+	}
 }
