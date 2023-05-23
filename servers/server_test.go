@@ -83,19 +83,19 @@ func setupTestDB() (*gorm.DB, error) {
 }
 
 func cleanup() {
-	if err := db.Exec("DELETE FROM users"); err != nil {
+	if err := db.Exec("DELETE FROM users").Error; err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Exec("DELETE FROM products"); err != nil {
+	if err := db.Exec("DELETE FROM products").Error; err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Exec("DELETE FROM subscription_plans"); err != nil {
+	if err := db.Exec("DELETE FROM subscription_plans").Error; err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Exec("DELETE FROM vouchers"); err != nil {
+	if err := db.Exec("DELETE FROM vouchers").Error; err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Exec("DELETE FROM subscriptions"); err != nil {
+	if err := db.Exec("DELETE FROM subscriptions").Error; err != nil {
 		log.Fatal(err)
 	}
 }
