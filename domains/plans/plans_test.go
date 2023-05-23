@@ -103,11 +103,11 @@ func setupTestDB() *gorm.DB {
 	if env == "cicd" {
 		dsn = "test_user:password@tcp(127.0.0.1:33306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	}
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	return db
+	return database
 }
 
 func newSubscriptionPlan(t *testing.T, productID string) *SubscriptionPlan {
