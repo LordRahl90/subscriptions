@@ -135,5 +135,7 @@ func newProduct(t *testing.T) *Product {
 }
 
 func cleanup() {
-	db.Exec("DELETE FROM products")
+	if err := db.Exec("DELETE FROM products").Error; err != nil {
+		log.Fatal(err)
+	}
 }
