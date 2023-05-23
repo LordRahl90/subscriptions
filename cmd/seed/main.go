@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -19,19 +20,19 @@ import (
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	ctx := context.Background()
 	db, err := setupDB()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	if err := loadProductAndPlans(ctx, db); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err := loadUsers(ctx, db); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	fmt.Println("seeding completed")

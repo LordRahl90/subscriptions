@@ -16,18 +16,18 @@ func main() {
 	env := os.Getenv("ENVIRONMENT")
 	if env == "" || env == "development" {
 		if err := godotenv.Load(); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	}
 
 	db, err := setupDB()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	server, err := servers.NewWithDefaults(db)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	log.Fatal(server.Router.Run(":8080"))
