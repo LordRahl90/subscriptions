@@ -192,7 +192,7 @@ func setupTestDB() *gorm.DB {
 	}
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	return db
 }
