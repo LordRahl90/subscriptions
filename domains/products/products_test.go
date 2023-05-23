@@ -48,9 +48,9 @@ func TestCreateNewProduct(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, p.ID)
 
-	// res, err := ps.Find(ctx)
-	// require.NoError(t, err)
-	// assert.Len(t, res, 1)
+	res, err := ps.Find(ctx)
+	require.NoError(t, err)
+	assert.Len(t, res, 1)
 }
 
 func TestFindProducts(t *testing.T) {
