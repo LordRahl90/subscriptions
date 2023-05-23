@@ -47,3 +47,7 @@ func (ps *SubscriptionPlanService) FindOne(ctx context.Context, id string) (*Sub
 		First(&result).Error
 	return result, err
 }
+
+func (ps *SubscriptionPlanService) delete(ctx context.Context, id ...string) error {
+	return ps.db.Delete(&SubscriptionPlan{}, id).Error
+}

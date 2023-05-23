@@ -35,15 +35,19 @@ func TestCreateNewSubscriptionPlan(t *testing.T) {
 		TrialDuration: 1,
 	}
 
-	t.Cleanup(func() {
-		if err := db.Exec("DELETE FROM subscription_plans WHERE id = ?", p.ID).Error; err != nil {
-			log.Fatal(err)
-		}
-	})
-
 	ps, err := New(db)
 	require.NoError(t, err)
 	require.NotNil(t, ps)
+
+	t.Cleanup(func() {
+		// if err := db.Exec("DELETE FROM subscription_plans WHERE id = ?", p.ID).Error; err != nil {
+		// 	log.Fatal(err)
+		// }
+		if err := ps.delete(ctx, p.ID); err != nil {
+			log.Fatal(err)
+		}
+
+	})
 
 	err = ps.Create(ctx, p)
 	require.NoError(t, err)
@@ -64,7 +68,10 @@ func TestFindSubscriptionPlans(t *testing.T) {
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
-		if err := db.Exec("DELETE FROM subscription_plans WHERE id IN ?", ids).Error; err != nil {
+		// if err := db.Exec("DELETE FROM subscription_plans WHERE id IN ?", ids).Error; err != nil {
+		// 	log.Fatal(err)
+		// }
+		if err := ps.delete(ctx, ids...); err != nil {
 			log.Fatal(err)
 		}
 	})

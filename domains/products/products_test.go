@@ -32,7 +32,9 @@ func TestCreateNewProduct(t *testing.T) {
 	p.TaxRate = 34.5
 
 	t.Cleanup(func() {
-		db.Exec("DELETE FROM products WHERE id = ?", p.ID)
+		if err := db.Exec("DELETE FROM products WHERE id = ?", p.ID); err != nil {
+			log.Fatal(err)
+		}
 	})
 
 	ps, err := New(db)
@@ -61,7 +63,9 @@ func TestFindProducts(t *testing.T) {
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
-		db.Exec("DELETE FROM products WHERE id IN ?", ids)
+		if err := db.Exec("DELETE FROM products WHERE id IN ?", ids); err != nil {
+			log.Fatal(err)
+		}
 	})
 
 	for i := 1; i <= 3; i++ {
