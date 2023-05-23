@@ -2,6 +2,7 @@ package plans
 
 import (
 	"context"
+	"log"
 	"os"
 	"testing"
 
@@ -35,7 +36,9 @@ func TestCreateNewSubscriptionPlan(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		db.Exec("DELETE FROM subscriptionplans WHERE id = ?", p.ID)
+		if err := db.Exec("DELETE FROM subscription_plans WHERE id = ?", p.ID).Error; err != nil {
+			log.Fatal(err)
+		}
 	})
 
 	ps, err := New(db)
@@ -61,7 +64,9 @@ func TestFindSubscriptionPlans(t *testing.T) {
 		for i := range pps {
 			ids[i] = pps[i].ID
 		}
-		db.Exec("DELETE FROM plans WHERE id IN ?", ids)
+		if err := db.Exec("DELETE FROM subscription_plans WHERE id IN ?", ids).Error; err != nil {
+			log.Fatal(err)
+		}
 	})
 
 	for i := 1; i <= 3; i++ {
@@ -93,7 +98,7 @@ func setupTestDB() *gorm.DB {
 	}
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	return db
 }
