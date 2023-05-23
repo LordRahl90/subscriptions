@@ -2,6 +2,7 @@ package vouchers
 
 import (
 	"context"
+	"log"
 	"os"
 	"strings"
 	"testing"
@@ -206,5 +207,7 @@ func newVoucher(t *testing.T) *Voucher {
 }
 
 func cleanup() {
-	db.Exec("DELETE FROM vouchers")
+	if err := db.Exec("DELETE FROM vouchers").Error; err != nil {
+		log.Fatal(err)
+	}
 }
