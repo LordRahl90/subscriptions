@@ -2,7 +2,6 @@ package servers
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -30,9 +29,6 @@ func TestMain(m *testing.M) {
 	db, initErr = setupTestDB()
 	if initErr != nil {
 		log.Fatal(initErr)
-	}
-	if db == nil {
-		log.Fatal("cannot initialize database")
 	}
 	s, err := NewWithDefaults(db)
 	if err != nil {
@@ -64,7 +60,6 @@ func requestHelper(t *testing.T, method, path, token string, payload []byte) *ht
 	}
 	server.Router.ServeHTTP(w, req)
 	require.NotNil(t, w)
-	fmt.Printf("\n\nRes: %s\n\n", w.Body.String())
 	return w
 }
 
