@@ -98,21 +98,11 @@ func TestFindSubscriptionPlans(t *testing.T) {
 
 func setupTestDB() (*gorm.DB, error) {
 	env := os.Getenv("ENVIRONMENT")
-	dsn := "root:@tcp(127.0.0.1:3306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:@tcp(127.0.0.1:3306)/shipments?charset=utf8mb4&parseTime=True&loc=Local"
 	if env == "cicd" {
-		dsn = "test_user:password@tcp(127.0.0.1:33306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
+		dsn = "test_user:password@tcp(127.0.0.1:33306)/shipments?charset=utf8mb4&parseTime=True&loc=Local"
 	}
-	dbase, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	sqlDB, err := dbase.DB()
-	if err != nil {
-		log.Fatal(err)
-	}
-	sqlDB.SetMaxIdleConns(0)
-
-	return dbase, err
+	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
 }
 
 func newSubscriptionPlan(t *testing.T, productID string) *SubscriptionPlan {
