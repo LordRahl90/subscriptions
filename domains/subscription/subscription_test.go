@@ -2,6 +2,7 @@ package subscription
 
 import (
 	"context"
+	"log"
 	"os"
 	"testing"
 
@@ -21,6 +22,9 @@ func TestMain(m *testing.M) {
 		os.Exit(code)
 	}()
 	db = setupTestDB()
+	if db == nil {
+		log.Fatal("invalid database")
+	}
 	code = m.Run()
 }
 
@@ -208,5 +212,7 @@ func newSubscription(t *testing.T, userID string, status Status) *Subscription {
 }
 
 func cleanup() {
-	db.Exec("DELETE FROM subscriptions")
+	if err := db.Exec("DELETE FROM subscriptions").Error; err != nil {
+		log.Fatal(err)
+	}
 }
