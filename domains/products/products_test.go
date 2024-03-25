@@ -89,6 +89,11 @@ func TestFindProducts(t *testing.T) {
 	assert.Equal(t, pps[1].Name, single.Name)
 	assert.Equal(t, pps[1].Description, single.Description)
 	assert.Equal(t, pps[1].TaxRate, single.TaxRate)
+
+	result, err := ps.FindByIDs(ctx, pps[1].ID, pps[2].ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, result)
+	assert.Len(t, result, 2)
 }
 
 func FuzzCreateProduct(f *testing.F) {
