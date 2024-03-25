@@ -8,8 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var _ Manager = (*SubscriptionPlanService)(nil)
-
 // SubscriptionPlanService implements the Manager interface
 type SubscriptionPlanService struct {
 	db *gorm.DB

@@ -98,7 +98,7 @@ func TestFindSubscriptionPlans(t *testing.T) {
 
 func setupTestDB() (*gorm.DB, error) {
 	env := os.Getenv("ENVIRONMENT")
-	dsn := "root:@tcp(127.0.0.1:3306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:password@tcp(127.0.0.1:3306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	if env == "cicd" {
 		dsn = "test_user:password@tcp(127.0.0.1:33306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	}
@@ -115,7 +115,7 @@ func newSubscriptionPlan(t *testing.T, productID string) *SubscriptionPlan {
 }
 
 func cleanup() {
-	if err := db.Exec("DELETE FROM subscription_plans").Error; err != nil {
+	if err := db.Exec("DELETE FROM subscription_plans where id!=''").Error; err != nil {
 		log.Fatal(err)
 	}
 }

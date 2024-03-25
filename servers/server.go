@@ -21,20 +21,20 @@ type Server struct {
 	Router              *gin.Engine
 	DB                  *gorm.DB
 	SigningSecret       string
-	userService         users.IUserService
-	productService      products.Manager
-	voucherService      vouchers.Manager
-	planService         plans.Manager
-	subscriptionService subscription.Manager
+	userService         userService
+	productService      productService
+	voucherService      voucherService
+	planService         planService
+	subscriptionService subscriptionService
 }
 
 // New returns a new server instance based on the injected services
 func New(
-	us users.IUserService,
-	ps products.Manager,
-	vs vouchers.Manager,
-	pls plans.Manager,
-	sbs subscription.Manager,
+	us userService,
+	ps productService,
+	vs voucherService,
+	pls planService,
+	sbs subscriptionService,
 ) *Server {
 	purchaseService = purchase.New(ps, pls, vs, sbs)
 	s := &Server{

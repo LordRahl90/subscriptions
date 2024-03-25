@@ -65,7 +65,7 @@ func requestHelper(t *testing.T, method, path, token string, payload []byte) *ht
 
 func setupTestDB() (*gorm.DB, error) {
 	env := os.Getenv("ENVIRONMENT")
-	dsn := "root:@tcp(127.0.0.1:3306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:password@tcp(127.0.0.1:3306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	if env == "cicd" {
 		dsn = "test_user:password@tcp(127.0.0.1:33306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	}
@@ -73,19 +73,19 @@ func setupTestDB() (*gorm.DB, error) {
 }
 
 func cleanup() {
-	if err := db.Exec("DELETE FROM users").Error; err != nil {
+	if err := db.Exec("DELETE FROM users where id!=''").Error; err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Exec("DELETE FROM products").Error; err != nil {
+	if err := db.Exec("DELETE FROM products where id!=''").Error; err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Exec("DELETE FROM subscription_plans").Error; err != nil {
+	if err := db.Exec("DELETE FROM subscription_plans where id!=''").Error; err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Exec("DELETE FROM vouchers").Error; err != nil {
+	if err := db.Exec("DELETE FROM vouchers where id!=''").Error; err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Exec("DELETE FROM subscriptions").Error; err != nil {
+	if err := db.Exec("DELETE FROM subscriptions where id!=''").Error; err != nil {
 		log.Fatal(err)
 	}
 }

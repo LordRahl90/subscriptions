@@ -15,7 +15,7 @@ type UserService struct {
 	db *gorm.DB
 }
 
-// NewUserService returns a new instance of user service
+// New NewUserService returns a new instance of user service
 func New(db *gorm.DB) (*UserService, error) {
 	if err := db.AutoMigrate(&User{}); err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (us *UserService) Create(ctx context.Context, u *User) error {
 		return err
 	}
 	u.Password = hash
-	return us.db.Save(&u).Error
+	return us.db.WithContext(ctx).Save(&u).Error
 }
 
 // Find finds a user with the given ID
@@ -45,6 +45,6 @@ func (us *UserService) Find(ctx context.Context, id string) (*User, error) {
 // FindByEmail finds a user by the given email
 func (us *UserService) FindByEmail(ctx context.Context, email string) (*User, error) {
 	var user *User
-	err := us.db.Where("email = ?", email).First(&user).Error
+	err := us.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
 	return user, err
 }
