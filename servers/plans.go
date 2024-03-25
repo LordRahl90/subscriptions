@@ -9,10 +9,10 @@ import (
 )
 
 func (s *Server) plansRoute() {
-	plans := s.Router.Group("plans")
+	planRoute := s.Router.Group("planRoute")
 	{
-		plans.GET("/:id", s.planDetails)
-		plans.POST("", s.createPlan)
+		planRoute.GET("/:id", s.planDetails)
+		planRoute.POST("", s.createPlan)
 	}
 }
 
