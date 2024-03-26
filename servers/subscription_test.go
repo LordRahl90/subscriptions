@@ -10,6 +10,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/brianvoe/gofakeit"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"gorm.io/gorm"
 	"subscriptions/domains/core"
 	"subscriptions/domains/plans"
 	"subscriptions/domains/products"
@@ -18,14 +24,6 @@ import (
 	"subscriptions/domains/vouchers"
 	"subscriptions/requests"
 	"subscriptions/responses"
-	"subscriptions/services/purchase/mocks"
-
-	"github.com/brianvoe/gofakeit"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"gorm.io/gorm"
 )
 
 const month = 30 * 24
@@ -39,24 +37,21 @@ func TestCreateSubscriptionWithDiscount(t *testing.T) {
 	}
 
 	um := &userMock{}
-	ps := &mocks.ProductMock{
+	ps := &productServiceMock{
 		FindOneFunc: func(ctx context.Context, id string) (*products.Product, error) {
 			return &products.Product{
 				TaxRate: 20,
 			}, nil
 		},
 		FindByIDsFunc: func(ctx context.Context, ids ...string) (map[string]products.Product, error) {
-			result := make(map[string]products.Product)
-			for i := range ids {
-				result[ids[i]] = products.Product{
-					ID:   ids[i],
-					Name: gofakeit.BeerAlcohol(),
-				}
-			}
-			return result, nil
+			return map[string]products.Product{
+				req.ProductID: {
+					TaxRate: 20,
+				},
+			}, nil
 		},
 	}
-	pls := &mocks.SubscritionPlanMock{
+	pls := &planServiceMock{
 		FindOneFunc: func(ctx context.Context, id string) (*plans.SubscriptionPlan, error) {
 			return &plans.SubscriptionPlan{
 				Amount:        2000,
@@ -65,7 +60,7 @@ func TestCreateSubscriptionWithDiscount(t *testing.T) {
 			}, nil
 		},
 	}
-	vs := &mocks.VoucherMocks{
+	vs := &voucherServiceMock{
 		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
@@ -76,7 +71,7 @@ func TestCreateSubscriptionWithDiscount(t *testing.T) {
 			}, nil
 		},
 	}
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		CreateFunc: func(ctx context.Context, s *subscription.Subscription) error {
 			s.ID = primitive.NewObjectID().Hex()
 			s.CreatedAt = time.Now()
@@ -134,14 +129,14 @@ func TestCreateSubscriptionWithOutDiscount(t *testing.T) {
 	}
 
 	um := &userMock{}
-	ps := &mocks.ProductMock{
+	ps := &productServiceMock{
 		FindOneFunc: func(ctx context.Context, id string) (*products.Product, error) {
 			return &products.Product{
 				TaxRate: 20,
 			}, nil
 		},
 	}
-	pls := &mocks.SubscritionPlanMock{
+	pls := &planServiceMock{
 		FindOneFunc: func(ctx context.Context, id string) (*plans.SubscriptionPlan, error) {
 			return &plans.SubscriptionPlan{
 				Amount:        2000,
@@ -150,7 +145,7 @@ func TestCreateSubscriptionWithOutDiscount(t *testing.T) {
 			}, nil
 		},
 	}
-	vs := &mocks.VoucherMocks{
+	vs := &voucherServiceMock{
 		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
@@ -159,7 +154,7 @@ func TestCreateSubscriptionWithOutDiscount(t *testing.T) {
 			}, nil
 		},
 	}
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		CreateFunc: func(ctx context.Context, s *subscription.Subscription) error {
 			s.ID = primitive.NewObjectID().Hex()
 			s.CreatedAt = time.Now()
@@ -203,7 +198,7 @@ func TestGetUserSubscriptions(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindFunc: func(ctx context.Context, userID string) ([]subscription.Subscription, error) {
 			return []subscription.Subscription{
 				{
@@ -237,7 +232,7 @@ func TestGetUserSubscriptions(t *testing.T) {
 			}, nil
 		},
 	}
-	ps := &mocks.ProductMock{
+	ps := &productServiceMock{
 		FindByIDsFunc: func(ctx context.Context, ids ...string) (map[string]products.Product, error) {
 			result := make(map[string]products.Product)
 			for i := range ids {
@@ -297,7 +292,7 @@ func TestGetUserSubscriptions_WithError(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindFunc: func(ctx context.Context, userID string) ([]subscription.Subscription, error) {
 			return nil, fmt.Errorf("cannot connect to db")
 		},
@@ -318,7 +313,7 @@ func TestGetSubscriptionDetails(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return &subscription.Subscription{
 				ID:                 subID,
@@ -372,7 +367,7 @@ func TestGetSubscriptionDetails_WithError(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return nil, gorm.ErrRecordNotFound
 		},
@@ -396,7 +391,7 @@ func TestGetSubscriptionDetails_WithRandomToken(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return &subscription.Subscription{
 				ID:                 subID,
@@ -437,7 +432,7 @@ func TestPauseSubscriptionDuringTrialPeriod(t *testing.T) {
 
 	id := primitive.NewObjectID().Hex()
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return &subscription.Subscription{
 				ID:                 id,
@@ -474,7 +469,7 @@ func TestPauseSubscription_FailedUpdate(t *testing.T) {
 
 	id := primitive.NewObjectID().Hex()
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return &subscription.Subscription{
 				ID:                 id,
@@ -514,7 +509,7 @@ func TestPauseSubscription_RandomToken(t *testing.T) {
 
 	id := primitive.NewObjectID().Hex()
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return &subscription.Subscription{
 				ID:                 id,
@@ -590,7 +585,7 @@ func TestUnPauseSubscription_FailedUpdate(t *testing.T) {
 
 	id := primitive.NewObjectID().Hex()
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return &subscription.Subscription{
 				ID:                 id,
@@ -630,7 +625,7 @@ func TestUnPauseSubscription_RandomToken(t *testing.T) {
 
 	id := primitive.NewObjectID().Hex()
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return &subscription.Subscription{
 				ID:                 id,
@@ -710,7 +705,7 @@ func TestCancelSubscription_FailedUpdate(t *testing.T) {
 
 	id := primitive.NewObjectID().Hex()
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &subscriptionServiceMock{
 		FindOneFunc: func(ctx context.Context, subID string) (*subscription.Subscription, error) {
 			return &subscription.Subscription{
 				ID:                 id,

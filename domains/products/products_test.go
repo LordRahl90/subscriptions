@@ -89,6 +89,11 @@ func TestFindProducts(t *testing.T) {
 	assert.Equal(t, pps[1].Name, single.Name)
 	assert.Equal(t, pps[1].Description, single.Description)
 	assert.Equal(t, pps[1].TaxRate, single.TaxRate)
+
+	result, err := ps.FindByIDs(ctx, pps[1].ID, pps[2].ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, result)
+	assert.Len(t, result, 2)
 }
 
 func FuzzCreateProduct(f *testing.F) {
@@ -114,7 +119,7 @@ func FuzzCreateProduct(f *testing.F) {
 
 func setupTestDB() *gorm.DB {
 	env := os.Getenv("ENVIRONMENT")
-	dsn := "root:@tcp(127.0.0.1:3306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:password@tcp(127.0.0.1:3306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	if env == "cicd" {
 		dsn = "test_user:password@tcp(127.0.0.1:33306)/subscriptions?charset=utf8mb4&parseTime=True&loc=Local"
 	}
@@ -135,7 +140,7 @@ func newProduct(t *testing.T) *Product {
 }
 
 func cleanup() {
-	if err := db.Exec("DELETE FROM products").Error; err != nil {
+	if err := db.Exec("DELETE FROM products where id!=''").Error; err != nil {
 		log.Fatal(err)
 	}
 }

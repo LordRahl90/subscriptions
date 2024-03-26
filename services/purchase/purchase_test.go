@@ -10,7 +10,6 @@ import (
 	"subscriptions/domains/products"
 	"subscriptions/domains/subscription"
 	"subscriptions/domains/vouchers"
-	"subscriptions/services/purchase/mocks"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,14 +30,14 @@ func TestProcessWithoutDiscount(t *testing.T) {
 		ProductID: primitive.NewObjectID().Hex(),
 		PlanID:    primitive.NewObjectID().Hex(),
 	}
-	ps := &mocks.ProductMock{
+	ps := &ProductMock{
 		FindOneFunc: func(ctx context.Context, id string) (*products.Product, error) {
 			return &products.Product{
 				TaxRate: 20,
 			}, nil
 		},
 	}
-	pls := &mocks.SubscritionPlanMock{
+	pls := &SubscriptionPlanMock{
 		FindOneFunc: func(ctx context.Context, id string) (*plans.SubscriptionPlan, error) {
 			return &plans.SubscriptionPlan{
 				Amount:        2000,
@@ -48,7 +47,7 @@ func TestProcessWithoutDiscount(t *testing.T) {
 		},
 	}
 
-	vs := &mocks.VoucherMocks{
+	vs := &VoucherMocks{
 		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
@@ -59,7 +58,7 @@ func TestProcessWithoutDiscount(t *testing.T) {
 		},
 	}
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &SubscriptionMock{
 		CreateFunc: func(ctx context.Context, s *subscription.Subscription) error {
 			s.ID = primitive.NewObjectID().Hex()
 			return nil
@@ -84,14 +83,14 @@ func TestProcessWithDiscount(t *testing.T) {
 		PlanID:    primitive.NewObjectID().Hex(),
 		Voucher:   "HELLO_ONE_TWO",
 	}
-	ps := &mocks.ProductMock{
+	ps := &ProductMock{
 		FindOneFunc: func(ctx context.Context, id string) (*products.Product, error) {
 			return &products.Product{
 				TaxRate: 20,
 			}, nil
 		},
 	}
-	pls := &mocks.SubscritionPlanMock{
+	pls := &SubscriptionPlanMock{
 		FindOneFunc: func(ctx context.Context, id string) (*plans.SubscriptionPlan, error) {
 			return &plans.SubscriptionPlan{
 				Amount:        2000,
@@ -101,7 +100,7 @@ func TestProcessWithDiscount(t *testing.T) {
 		},
 	}
 
-	vs := &mocks.VoucherMocks{
+	vs := &VoucherMocks{
 		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
@@ -113,7 +112,7 @@ func TestProcessWithDiscount(t *testing.T) {
 		},
 	}
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &SubscriptionMock{
 		CreateFunc: func(ctx context.Context, s *subscription.Subscription) error {
 			s.ID = primitive.NewObjectID().Hex()
 			return nil
@@ -138,14 +137,14 @@ func TestProcessWithExpiredDiscount(t *testing.T) {
 		PlanID:    primitive.NewObjectID().Hex(),
 		Voucher:   "HELLO_ONE_TWO",
 	}
-	ps := &mocks.ProductMock{
+	ps := &ProductMock{
 		FindOneFunc: func(ctx context.Context, id string) (*products.Product, error) {
 			return &products.Product{
 				TaxRate: 20,
 			}, nil
 		},
 	}
-	pls := &mocks.SubscritionPlanMock{
+	pls := &SubscriptionPlanMock{
 		FindOneFunc: func(ctx context.Context, id string) (*plans.SubscriptionPlan, error) {
 			return &plans.SubscriptionPlan{
 				Amount:        2000,
@@ -155,7 +154,7 @@ func TestProcessWithExpiredDiscount(t *testing.T) {
 		},
 	}
 
-	vs := &mocks.VoucherMocks{
+	vs := &VoucherMocks{
 		FindByCodeFunc: func(ctx context.Context, productID, code string) (*vouchers.Voucher, error) {
 			return &vouchers.Voucher{
 				ID:          primitive.NewObjectID().Hex(),
@@ -167,7 +166,7 @@ func TestProcessWithExpiredDiscount(t *testing.T) {
 		},
 	}
 
-	sbs := &mocks.SubscriptionMock{
+	sbs := &SubscriptionMock{
 		CreateFunc: func(ctx context.Context, s *subscription.Subscription) error {
 			s.ID = primitive.NewObjectID().Hex()
 			return nil

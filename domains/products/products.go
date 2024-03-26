@@ -9,8 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var _ Manager = (*ProductService)(nil)
-
 // ProductService implements the Manager interface
 type ProductService struct {
 	db *gorm.DB

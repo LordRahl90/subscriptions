@@ -5,22 +5,25 @@ import (
 	"fmt"
 	"time"
 
-	"subscriptions/domains/plans"
-	"subscriptions/domains/products"
 	"subscriptions/domains/subscription"
 	"subscriptions/domains/vouchers"
 )
 
 // Service contains the sales logic handling
 type Service struct {
-	productService      products.Manager
-	planService         plans.Manager
-	voucherService      vouchers.Manager
-	subscriptionService subscription.Manager
+	productService      ProductManager
+	planService         PlanManager
+	voucherService      VoucherManager
+	subscriptionService SubscriptionManager
 }
 
 // New initializes a new purchase service
-func New(ps products.Manager, pls plans.Manager, vs vouchers.Manager, sbs subscription.Manager) *Service {
+func New(
+	ps ProductManager,
+	pls PlanManager,
+	vs VoucherManager,
+	sbs SubscriptionManager,
+) *Service {
 	return &Service{
 		productService:      ps,
 		planService:         pls,

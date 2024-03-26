@@ -2,10 +2,12 @@ version: '3.1'
 services:
   subscriptions:
     container_name: subscriptions
-    image: lordrahl/subscriptions:latest
+#    image: lordrahl/subscriptions:latest
+    build:
+      context: .
     entrypoint: ./subscriptions_api
     ports:
-      - 8080:8080
+      - '8080:8080'
     environment:
       ENVIRONMENT: "docker"
       DB_HOST: subscriptionsdb
